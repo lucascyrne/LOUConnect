@@ -112,7 +112,7 @@ int main()
 	               	printf("\nInsira o nome que deseja deletar: ");
 	                scanf("%s",nome);
 
-	                deletarNo(arvore, nome);
+	                arvore = deletarNo(arvore, nome);
 
 	                printf("\nDeletar outro registro? (s/n)");
 	                fflush(stdin);
