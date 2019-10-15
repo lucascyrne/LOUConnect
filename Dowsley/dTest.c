@@ -1,15 +1,17 @@
-#include <stdio.h> ///for input output functions like printf, scanf
-#include <stdlib.h>
-#include <conio.h>
-#include <windows.h> ///for windows related functions (not important)
-#include <string.h>  ///string operations
+#include <stdio.h>  //Para funções de input e output like.
+#include <stdlib.h>  // Para funções de gerenciamento de memória.
+#include <conio.h>  // Para funções que movem o no console.
+#include <windows.h>  // Para funções relacionadas ao OS Windows. Neste caso, só usei para dar "cls" e limpar a tela do console.
+#include <string.h>  // Para operações de Strings, muito importante.
 
+// 
 typedef struct USER{
 	char nome[10];
 	struct USER* esquerda;
 	struct USER* direita;
 }USER;
 
+// <conio.h> :: Variável e função que conseguem mover o cursor de escrita e leitura no console (CMD), com coordenadas X e Y.
 COORD coord = {0,0};
 void gotoxy(int x,int y)
 {
@@ -23,37 +25,38 @@ void exibirPre(USER*);
 void exibirIn(USER*);
 void exibirPos(USER*);
 USER* buscarNo(USER*, char*);
+USER* deletarNo(USER*, char*);
 
 int main()
 {
 	USER* arvore = NULL;  // Criação da Árvore
 	char nome[10], alter[10];   // Nome q entrará na árvore.
-	char another, choice;
+	char another, choice;  // Variáveis auxiliares.
 
     while(1)
     {
-        system("cls"); ///clear the console window
-        gotoxy(30,10); /// move the cursor to postion 30, 10 from top-left corner
-        printf("1. Adicionar Registro"); /// option for add record
+        system("cls");  // Limpa a janela do console.
+        gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
+        printf("1. Adicionar Registro"); 
         gotoxy(30,12);
-        printf("2. Listar Registros"); /// option for showing existing record
+        printf("2. Listar Registros");
         gotoxy(30,14);
-        printf("3. Modificar Registros"); /// option for editing record
+        printf("3. Modificar Registros");
         gotoxy(30,16);
-        printf("4. Deletar Registros"); /// option for deleting record
+        printf("4. Deletar Registros");
         gotoxy(30,18);
-        printf("5. Sair"); /// exit from the program
+        printf("5. Sair");
         gotoxy(30,20);
-        printf("Escolha: "); /// enter the choice 1, 2, 3, 4, 5
+        printf("Escolha: ");
         
-        fflush(stdin); /// flush the input buffer
-        choice  = getche(); /// get the input from keyboard
+        fflush(stdin);  // Dá flush no input buffer. Apaga qualquer caractér ou string que havia lá antes.
+        choice  = getche();  // Recebe entrada do teclado, e como padrão printa na tela.
         switch(choice)
         {
-	        case '1':  // Se o usuário pressionar '1': Adiciona registro.
+	        case '1':  // Se o usuário pressionar '1': Registra um novo USER na árvore.
 	            system("cls");
 	            another = 's';
-	            while(another == 's')  /// if user want to add another record
+	            while(another == 's')  // Se o usuário quiser outro input.
 	            {
 	                printf("\nInsira o nome que deseja adicionar: ");
 	                scanf("%s",nome);
@@ -65,7 +68,7 @@ int main()
 	                another = getche();
 	            }
 	            break;
-	        case '2':  // Exibe Registros
+	        case '2':  // Exibe todos os USERS da árvore, em todos os 3 tipos de formato de procura.
 	            system("cls");
 
 				printf("\nPre.:");
@@ -80,7 +83,7 @@ int main()
 	            getch();
 	            break;
 
-	        case '3':  // Modifica registros existentes
+	        case '3':  // Modifica informações de um USER.
 	            system("cls");
 	            another = 's';
 	            while(another == 's')
@@ -97,18 +100,22 @@ int main()
 	                another = getche();
 	            }
 	            break;
-	        case '4':
+	        case '4':  // Deleta um USER da árvore, e a reconstrói.
 	            system("cls");
 	            another = 's';
 	            while(another == 's')
 	            {
-	               	printf("\nEm breve...");
+	               	printf("\nInsira o nome que deseja deletar: ");
+	                scanf("%s",nome);
+
+	                deletarNo(arvore, nome);
+
 	                printf("\nDeletar outro registro? (s/n)");
 	                fflush(stdin);
 	                another = getche();
 	            }
 	            break;
-	        case '5':
+	        case '5':  // 
 	            return 0; /// exit from the program
         }
 	}
@@ -132,7 +139,7 @@ void inserirNo(USER** arvore, char* nome)
     }
 }
 
-void exibirPre(USER* arvore)
+void exibirPre(USER* arvore)  // Função que printa as chaves em Pré-ordem.
 {
 	if (arvore != NULL)
 	{
@@ -142,7 +149,7 @@ void exibirPre(USER* arvore)
 	}
 }
 
-void exibirIn(USER* arvore)
+void exibirIn(USER* arvore)  // Função que printa as chaves em In-ordem.
 {
 	if (arvore != NULL)
 	{
@@ -152,7 +159,7 @@ void exibirIn(USER* arvore)
 	}
 }
 
-void exibirPos(USER* arvore)
+void exibirPos(USER* arvore)  // Função que printa as chaves em Pós-ordem.
 {
 	if (arvore != NULL)
 	{
@@ -162,9 +169,9 @@ void exibirPos(USER* arvore)
 	}
 }
 
-USER* buscarNo(USER* raiz, char* nome)
+USER* buscarNo(USER* raiz, char* nome)  // Função que busca Nós por sua chave e os retorna.
 {
-	if (raiz == NULL || strcmp(raiz->nome, nome) == 0); 
+	if (raiz == NULL || strcmp(raiz->nome, nome) == 0)
     	return raiz; 
      
     // Key is greater than root's key 
@@ -173,4 +180,49 @@ USER* buscarNo(USER* raiz, char* nome)
   
     // Key is smaller than root's key 
     return buscarNo(raiz->esquerda, nome); 
+}
+
+USER* deletarNo(USER* raiz, char* nome)  // Função que busca nós pela sua chave, e os apaga da memória.
+{
+	if (raiz == NULL) return raiz;
+
+	if (strcmp(nome, raiz->nome) < 0)
+		raiz->esquerda = deletarNo(raiz->esquerda, nome);
+	
+	else if (strcmp(nome, raiz->nome) > 0)
+		raiz->direita = deletarNo(raiz->direita, nome);
+
+	// Se for igual.
+	else 
+	{
+		// Nó com um filho ou nenhum filho.
+		if (raiz->esquerda == NULL)
+		{
+			USER* temp = raiz->direita;
+			free(raiz);
+			return temp;
+		}
+		else if (raiz->direita == NULL)
+		{
+			USER* temp = raiz->esquerda;
+			free(raiz);
+			return temp;
+		}
+
+		// Nó com 2 filhos: Pegar o sucessor InOrdem. 
+		// (o menor na subárvore da direita)
+		USER* atual = raiz->direita; 
+  
+	    /* loop down to find the leftmost leaf */
+	    while (atual && atual->esquerda != NULL)
+	        atual = atual->esquerda; 
+		USER* temp = atual;
+
+		// Copia o valor do sucessor inordem para o Nó.
+		strcpy(raiz->nome, temp->nome);
+
+		// Deleta o sucessor inordem
+		raiz->direita = deletarNo(raiz->direita, temp->nome);
+	}
+	return raiz;
 }
