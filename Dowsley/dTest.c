@@ -93,7 +93,11 @@ int main()
 	                printf("\nDigite o novo nome: ");
 	                scanf("%s",alter);
 
-	                strcpy(buscarNo(arvore, nome)->nome, alter);
+	                USER* temp = buscarNo(arvore, nome);
+	                if (temp != NULL)  // Encontrou
+	                	strcpy(temp->nome, alter);
+	                else  // Não encontrou
+	                	printf("%\nUsuario nao encontrado.");
 
 	                printf("\nModificar outro registro? (s/n)");
 	                fflush(stdin);
