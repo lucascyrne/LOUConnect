@@ -4,9 +4,18 @@
 #include <windows.h>  // Para funções relacionadas ao OS Windows. Neste caso, só usei para dar "cls" e limpar a tela do console.
 #include <string.h>  // Para operações de Strings, muito importante.
 
-// 
+// Struct que guarda uma data. Será usado para aniversário.
+typedef struct Data{
+	char ano[4];
+	char mes[2];
+	char dia[2];
+}DATA;
+
+// Struct que guarda informações de um usuário.
 typedef struct USER{
 	char nome[10];
+	DATA* niver;
+
 	struct USER* esquerda;
 	struct USER* direita;
 }USER;
@@ -20,7 +29,8 @@ void gotoxy(int x,int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
 }
 
-void inserirNo(USER**, char*);
+USER* novoNo(void);
+void inserirNo(USER**, USER*);
 void exibirPre(USER*);
 void exibirIn(USER*);
 void exibirPos(USER*);
@@ -30,8 +40,8 @@ USER* deletarNo(USER*, char*);
 int main()
 {
 	USER* arvore = NULL;  // Criação da Árvore
-	char nome[10], alter[10];   // Nome q entrará na árvore.
-	char another, choice;  // Variáveis auxiliares.
+	char nome[10], alter[10], two[2], four[4];   // Auxiliares de busca e alteração
+	char another, choice;  // Auxiliares de escolha na GUI
 
     while(1)
     {
@@ -48,7 +58,7 @@ int main()
         printf("5. Sair");
         gotoxy(30,20);
         printf("Escolha: ");
-        
+
         fflush(stdin);  // Dá flush no input buffer. Apaga qualquer caractér ou string que havia lá antes.
         choice  = getche();  // Recebe entrada do teclado, e como padrão printa na tela.
         switch(choice)
@@ -58,10 +68,7 @@ int main()
 	            another = 's';
 	            while(another == 's')  // Se o usuário quiser outro input.
 	            {
-	                printf("\nInsira o nome que deseja adicionar: ");
-	                scanf("%s",nome);
-
-					inserirNo(&arvore, nome);
+					inserirNo(&arvore, novoNo());
 
 	                printf("\nAdicionar outro registro? (s/n) ");
 	                fflush(stdin);
@@ -71,18 +78,18 @@ int main()
 	        case '2':  // Exibe todos os USERS da árvore, em todos os 3 tipos de formato de procura.
 	            system("cls");
 
-				printf("\nPre.:");
-				exibirPre(arvore);
+				//printf("\nPre-Ordem:");
+				//exibirPre(arvore);
 
-				printf("\nIn..:");
-				exibirIn(arvore);
+				//printf("\nPos-Ordem:");
+				//exibirPos(arvore);
 
-				printf("\nPost:");
-				exibirPos(arvore);
+				printf("\nIn-Ordem:");
+
+			    exibirIn(arvore);
 
 	            getch();
 	            break;
-
 	        case '3':  // Modifica informações de um USER.
 	            system("cls");
 	            another = 's';
@@ -90,14 +97,43 @@ int main()
 	            {
 	               	printf("\nInsira o nome que deseja alterar: ");
 	                scanf("%s",nome);
-	                printf("\nDigite o novo nome: ");
-	                scanf("%s",alter);
 
 	                USER* temp = buscarNo(arvore, nome);
 	                if (temp != NULL)  // Encontrou
-	                	strcpy(temp->nome, alter);
-	                else  // Não encontrou
-	                	printf("%\nUsuario nao encontrado.");
+	                {
+		                system("cls");  // Limpa a janela do console.
+				        gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
+				        printf("Usuario %s encontrado. O que deseja alterar?", nome); 
+				        gotoxy(30,12);
+				        printf("1. Nome");
+				        gotoxy(30,14);
+				        printf("2. Data de Aniversario");
+				        gotoxy(30,16);
+				        printf("Escolha: ");
+
+				        fflush(stdin);
+        				choice  = getche();
+        				switch(choice)
+        				{
+        					case '1':
+        						printf("\nDigite o novo nome: ");
+	                			scanf("%s",alter);
+	                			strcpy(temp->nome, alter);
+	                			printf("\nNome alterado com sucesso!");
+        						break;
+        					case '2':
+        						printf("\nDigite a nova data de nascimento no formato DD MM AAAA: ");
+								scanf("%s", two);
+								strcpy(temp->niver->dia, two);
+								scanf("%s", two);
+								strcpy(temp->niver->mes, two);
+								scanf("%s", four);
+								strcpy(temp->niver->ano, four);
+								printf("\n", "Data de nascimento alterado com sucesso!");
+								break;
+        				}
+	                }
+	                else printf("%\nERRO: Usuario nao encontrado!");  // Não encontrou usuário sob este nome
 
 	                printf("\nModificar outro registro? (s/n)");
 	                fflush(stdin);
@@ -119,27 +155,48 @@ int main()
 	                another = getche();
 	            }
 	            break;
-	        case '5':  // 
-	            return 0; /// exit from the program
+	        case '5':  // Sai do programa. Aqui seria a serialização da árvore?
+	            return 0;
         }
 	}
 }
 
-void inserirNo(USER** arvore, char* nome)
+USER* novoNo(void)
 {
 	USER* novoUser = (USER*)malloc(sizeof(USER));
-	strcpy(novoUser->nome, nome);
 	novoUser->esquerda = NULL;
 	novoUser->direita = NULL;
 
+	char nome[10];
+	char two[2];
+	char four[4];
+	printf("\nInsira o nome que deseja adicionar: ");
+	scanf("%s", nome);
+	strcpy(novoUser->nome, nome);
+
+	DATA* niver = (DATA*)malloc(sizeof(DATA));
+	printf("\nDigite sua data de nascimento no formato DD MM AAAA: ");
+	scanf("%s", two);
+	strcpy(niver->dia, two);
+	scanf("%s", two);
+	strcpy(niver->mes, two);
+	scanf("%s", four);
+	strcpy(niver->ano, four);
+	novoUser->niver = niver;
+
+	return novoUser;
+}
+
+void inserirNo(USER** arvore, USER* novoUser)  // Cria novo nó, as informações novas são inseridas dentro da própria função.
+{
 	if (*arvore == NULL)
         *arvore = novoUser;
     else
     {
         if (strcmp(novoUser->nome, (*arvore)->nome) <= 0)
-            inserirNo(&(*arvore)->esquerda, nome);
+            inserirNo(&(*arvore)->esquerda, novoUser);
         else
-        	inserirNo(&(*arvore)->direita, nome);
+        	inserirNo(&(*arvore)->direita, novoUser);
     }
 }
 
@@ -147,7 +204,10 @@ void exibirPre(USER* arvore)  // Função que printa as chaves em Pré-ordem.
 {
 	if (arvore != NULL)
 	{
-		printf(" %s", arvore->nome);
+		printf("\n\n%s :: ", arvore->nome);
+ 		printf("%d", arvore->niver->dia);
+		printf("/%d", arvore->niver->mes);
+		printf("/%d", arvore->niver->ano);
 		exibirPre(arvore->esquerda);
 		exibirPre(arvore->direita);
 	}
@@ -157,8 +217,18 @@ void exibirIn(USER* arvore)  // Função que printa as chaves em In-ordem.
 {
 	if (arvore != NULL)
 	{
-		exibirIn(arvore->esquerda);
-		printf(" %s", arvore->nome);
+		/*exibirIn(arvore->esquerda);
+		char str_niver[10];
+		strcpy(str_niver, arvore->niver->dia);
+		strcat(str_niver, "/");
+		strcat(str_niver, arvore->niver->mes);
+		strcat(str_niver, "/");
+		strcat(str_niver, arvore->niver->ano);
+		printf("      %-12s\t\t %-10s\n\n", arvore->nome, str_niver);*/
+		printf("\n\n%s :: ", arvore->nome);
+		printf("%s", arvore->niver->dia);
+		printf("/%s", arvore->niver->mes);
+		printf("/%s", arvore->niver->ano);
 		exibirIn(arvore->direita);
 	}
 }
@@ -169,7 +239,10 @@ void exibirPos(USER* arvore)  // Função que printa as chaves em Pós-ordem.
 	{
 		exibirPos(arvore->esquerda);
 		exibirPos(arvore->direita);
-		printf(" %s", arvore->nome);
+		printf("\n\n%s :: ", arvore->nome);
+		printf("%d", arvore->niver->dia);
+		printf("/%d", arvore->niver->mes);
+		printf("/%d", arvore->niver->ano);
 	}
 }
 
