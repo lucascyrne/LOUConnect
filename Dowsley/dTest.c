@@ -6,9 +6,9 @@
 
 // Struct que guarda uma data. Será usado para aniversário.
 typedef struct Data{
-	char ano[4];
-	char mes[2];
-	char dia[2];
+	int dia;
+	int mes;
+	int ano;
 }DATA;
 
 // Struct que guarda informações de um usuário.
@@ -40,7 +40,7 @@ USER* deletarNo(USER*, char*);
 int main()
 {
 	USER* arvore = NULL;  // Criação da Árvore
-	char nome[10], alter[10], two[2], four[4];   // Auxiliares de busca e alteração
+	char nome[10], alter[10];   // Auxiliares de busca e alteração
 	char another, choice;  // Auxiliares de escolha na GUI
 
     while(1)
@@ -78,13 +78,13 @@ int main()
 	        case '2':  // Exibe todos os USERS da árvore, em todos os 3 tipos de formato de procura.
 	            system("cls");
 
-				//printf("\nPre-Ordem:");
-				//exibirPre(arvore);
+				printf("\n\nPre-Ordem:");
+				exibirPre(arvore);
 
-				//printf("\nPos-Ordem:");
-				//exibirPos(arvore);
+				printf("\n\nPos-Ordem:");
+				exibirPos(arvore);
 
-				printf("\nIn-Ordem:");
+				printf("\n\nIn-Ordem:");
 
 			    exibirIn(arvore);
 
@@ -123,12 +123,9 @@ int main()
         						break;
         					case '2':
         						printf("\nDigite a nova data de nascimento no formato DD MM AAAA: ");
-								scanf("%s", two);
-								strcpy(temp->niver->dia, two);
-								scanf("%s", two);
-								strcpy(temp->niver->mes, two);
-								scanf("%s", four);
-								strcpy(temp->niver->ano, four);
+								scanf("%d", &temp->niver->dia);
+								scanf("%d", &temp->niver->mes);
+								scanf("%d", &temp->niver->ano);
 								printf("\n", "Data de nascimento alterado com sucesso!");
 								break;
         				}
@@ -168,20 +165,15 @@ USER* novoNo(void)
 	novoUser->direita = NULL;
 
 	char nome[10];
-	char two[2];
-	char four[4];
 	printf("\nInsira o nome que deseja adicionar: ");
 	scanf("%s", nome);
 	strcpy(novoUser->nome, nome);
 
 	DATA* niver = (DATA*)malloc(sizeof(DATA));
 	printf("\nDigite sua data de nascimento no formato DD MM AAAA: ");
-	scanf("%s", two);
-	strcpy(niver->dia, two);
-	scanf("%s", two);
-	strcpy(niver->mes, two);
-	scanf("%s", four);
-	strcpy(niver->ano, four);
+	scanf("%d", &niver->dia);
+	scanf("%d", &niver->mes);
+	scanf("%d", &niver->ano);
 	novoUser->niver = niver;
 
 	return novoUser;
@@ -204,7 +196,7 @@ void exibirPre(USER* arvore)  // Função que printa as chaves em Pré-ordem.
 {
 	if (arvore != NULL)
 	{
-		printf("\n\n%s :: ", arvore->nome);
+		printf("\n%s :: ", arvore->nome);
  		printf("%d", arvore->niver->dia);
 		printf("/%d", arvore->niver->mes);
 		printf("/%d", arvore->niver->ano);
@@ -217,18 +209,11 @@ void exibirIn(USER* arvore)  // Função que printa as chaves em In-ordem.
 {
 	if (arvore != NULL)
 	{
-		/*exibirIn(arvore->esquerda);
-		char str_niver[10];
-		strcpy(str_niver, arvore->niver->dia);
-		strcat(str_niver, "/");
-		strcat(str_niver, arvore->niver->mes);
-		strcat(str_niver, "/");
-		strcat(str_niver, arvore->niver->ano);
-		printf("      %-12s\t\t %-10s\n\n", arvore->nome, str_niver);*/
-		printf("\n\n%s :: ", arvore->nome);
-		printf("%s", arvore->niver->dia);
-		printf("/%s", arvore->niver->mes);
-		printf("/%s", arvore->niver->ano);
+		exibirIn(arvore->esquerda);
+		printf("\n%s :: ", arvore->nome);
+		printf("%d", arvore->niver->dia);
+		printf("/%d", arvore->niver->mes);
+		printf("/%d", arvore->niver->ano);
 		exibirIn(arvore->direita);
 	}
 }
@@ -239,7 +224,7 @@ void exibirPos(USER* arvore)  // Função que printa as chaves em Pós-ordem.
 	{
 		exibirPos(arvore->esquerda);
 		exibirPos(arvore->direita);
-		printf("\n\n%s :: ", arvore->nome);
+		printf("\n%s :: ", arvore->nome);
 		printf("%d", arvore->niver->dia);
 		printf("/%d", arvore->niver->mes);
 		printf("/%d", arvore->niver->ano);
