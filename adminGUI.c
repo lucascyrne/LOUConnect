@@ -40,6 +40,7 @@ USER* deletarNo(USER*, char*);
 int main()
 {
 	USER* arvore = NULL;  // Criação da Árvore
+	USER* temp;  // Auxiliar para armazenar um User.
 	char nome[10], alter[10];   // Auxiliares de busca e alteração
 	char another, choice;  // Auxiliares de escolha na GUI
 
@@ -47,16 +48,18 @@ int main()
     {
         system("cls");  // Limpa a janela do console.
         gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
-        printf("1. Adicionar Registro"); 
+        printf("1. Adicionar Usuario"); 
         gotoxy(30,12);
-        printf("2. Listar Registros");
+        printf("2. Listar Usuarios");
         gotoxy(30,14);
-        printf("3. Modificar Registros");
+		printf("3. Buscar um Usuario");
         gotoxy(30,16);
-        printf("4. Deletar Registros");
+        printf("4. Modificar Info. de Usuario");
         gotoxy(30,18);
-        printf("5. Sair");
+        printf("5. Deletar Usuario");
         gotoxy(30,20);
+        printf("6. Sair");
+        gotoxy(30,22);
         printf("Escolha: ");
 
         fflush(stdin);  // Dá flush no input buffer. Apaga qualquer caractér ou string que havia lá antes.
@@ -70,12 +73,12 @@ int main()
 	            {
 					inserirNo(&arvore, novoNo());
 
-	                printf("\nAdicionar outro registro? (s/n) ");
+	                printf("\nAdicionar outro Usuario? (s/n) ");
 	                fflush(stdin);
 	                another = getche();
 	            }
 	            break;
-	        case '2':  // Exibe todos os USERS da árvore, em todos os 3 tipos de formato de procura.
+	        case '2':  // Exibe o nome de todos os USERS da árvore, em todos os 3 tipos de formato de procura.
 	            system("cls");
 
 				printf("\n\nPre-Ordem:");
@@ -90,19 +93,41 @@ int main()
 
 	            getch();
 	            break;
-	        case '3':  // Modifica informações de um USER.
+			case '3':  // Busca um usuário pelo seu nome, e devolve todas as informações dele na tela.
+				system("cls");
+				another = 's';
+				while(another == 's')
+				{
+					printf("\nInsira o nome do usuario que deseja buscar: ");
+					scanf("%s", nome);
+					
+					temp = buscarNo(arvore, nome);
+					if (temp != NULL)
+					{
+						printf("\nNome: %s", temp->nome);
+						printf("\nData de Nascimento: %d/%d/%d", temp->niver->dia, temp->niver->mes, temp->niver->ano);
+					}
+					else
+						printf("\nUsuario nao encontrado.");
+
+					printf("\nBuscar outro Usuario? (s/n) ");
+					fflush(stdin);
+					another = getche();
+				}
+				break;
+	        case '4':  // Modifica informações de um USER.
 	            system("cls");
 	            another = 's';
 	            while(another == 's')
 	            {
-	               	printf("\nInsira o nome que deseja alterar: ");
+	               	printf("\nInsira o nome do usuario que deseja alterar: ");
 	                scanf("%s",nome);
 
-	                USER* temp = buscarNo(arvore, nome);
+	                temp = buscarNo(arvore, nome);
 	                if (temp != NULL)  // Encontrou
 	                {
-		                system("cls");  // Limpa a janela do console.
-				        gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
+		                system("cls");
+				        gotoxy(30,10);
 				        printf("Usuario %s encontrado. O que deseja alterar?", nome); 
 				        gotoxy(30,12);
 				        printf("1. Nome");
@@ -126,18 +151,18 @@ int main()
 								scanf("%d", &temp->niver->dia);
 								scanf("%d", &temp->niver->mes);
 								scanf("%d", &temp->niver->ano);
-								printf("\n", "Data de nascimento alterado com sucesso!");
+								printf("\nData de nascimento alterado com sucesso!");
 								break;
         				}
 	                }
-	                else printf("%\nERRO: Usuario nao encontrado!");  // Não encontrou usuário sob este nome
+	                else printf("\nERRO: Usuario nao encontrado!");  // Não encontrou usuário sob este nome
 
 	                printf("\nModificar outro registro? (s/n)");
 	                fflush(stdin);
 	                another = getche();
 	            }
 	            break;
-	        case '4':  // Deleta um USER da árvore, e a reconstrói.
+	        case '5':  // Deleta um USER da árvore, e a reconstrói.
 	            system("cls");
 	            another = 's';
 	            while(another == 's')
@@ -152,7 +177,7 @@ int main()
 	                another = getche();
 	            }
 	            break;
-	        case '5':  // Sai do programa. Aqui seria a serialização da árvore?
+	        case '6':  // Sai do programa. Aqui seria a serialização da árvore?
 	            return 0;
         }
 	}
@@ -196,10 +221,7 @@ void exibirPre(USER* arvore)  // Função que printa as chaves em Pré-ordem.
 {
 	if (arvore != NULL)
 	{
-		printf("\n%s :: ", arvore->nome);
- 		printf("%d", arvore->niver->dia);
-		printf("/%d", arvore->niver->mes);
-		printf("/%d", arvore->niver->ano);
+		printf("\n%s", arvore->nome);
 		exibirPre(arvore->esquerda);
 		exibirPre(arvore->direita);
 	}
@@ -210,10 +232,7 @@ void exibirIn(USER* arvore)  // Função que printa as chaves em In-ordem.
 	if (arvore != NULL)
 	{
 		exibirIn(arvore->esquerda);
-		printf("\n%s :: ", arvore->nome);
-		printf("%d", arvore->niver->dia);
-		printf("/%d", arvore->niver->mes);
-		printf("/%d", arvore->niver->ano);
+		printf("\n%s", arvore->nome);
 		exibirIn(arvore->direita);
 	}
 }
@@ -224,10 +243,7 @@ void exibirPos(USER* arvore)  // Função que printa as chaves em Pós-ordem.
 	{
 		exibirPos(arvore->esquerda);
 		exibirPos(arvore->direita);
-		printf("\n%s :: ", arvore->nome);
-		printf("%d", arvore->niver->dia);
-		printf("/%d", arvore->niver->mes);
-		printf("/%d", arvore->niver->ano);
+		printf("\n%s", arvore->nome);
 	}
 }
 
