@@ -39,6 +39,7 @@ USER* deletarNo(USER*, char*);
 
 int main()
 {
+	FILE *fp, *ft; /// file pointers
 	USER* arvore = NULL;  // Criação da Árvore
 	USER* temp;  // Auxiliar para armazenar um User.
 	char nome[10], alter[10];   // Auxiliares de busca e alteração
