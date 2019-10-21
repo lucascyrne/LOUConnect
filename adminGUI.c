@@ -14,7 +14,7 @@ typedef struct Data{
 // Struct que guarda informações de um usuário.
 typedef struct USER{
 	char nome[10];
-	DATA* niver;
+	DATA niver;
 
 	struct USER* esquerda;
 	struct USER* direita;
@@ -29,23 +29,58 @@ void gotoxy(int x,int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
 }
 
-USER* novoNo(void);
+USER* novoNo(USER*);
 void inserirNo(USER**, USER*);
 void exibirPre(USER*);
 void exibirIn(USER*);
 void exibirPos(USER*);
+void varrerArvore(USER*, FILE*);
 USER* buscarNo(USER*, char*);
 USER* deletarNo(USER*, char*);
 
 int main()
 {
-	FILE *fp, *ft; /// file pointers
+	FILE* fp;  // Ponteiros de arquivo
 	USER* arvore = NULL;  // Criação da Árvore
-	USER* temp;  // Auxiliar para armazenar um User.
+	USER* temp;  // Auxiliar para alteçao
+	USER u;  // Auxiliar para des-serializar arvore
 	char nome[10], alter[10];   // Auxiliares de busca e alteração
 	char another, choice;  // Auxiliares de escolha na GUI
 
-    while(1)
+  	// Criação ou reload de árvore.
+	fp = fopen("USER.DAT", "rb+");
+  	if (fp == NULL) // Criar arquivo
+    {
+		fp = fopen("USER.DAT", "wb+");  // Cria arquivo vazio
+		if (fp == NULL)  // Se ainda não existe arquivo...
+        {
+          printf("Impossivel abrir/criar arquivo.");
+          exit(1);  // Deu erro, sai do programa.
+        }
+    }
+	else
+    {
+		system("cls");  // Limpa a janela do console.
+		gotoxy(28,10);
+		printf("CARREGANDO REGISTROS...");
+
+		int count = 0;
+		while(fread(&u, sizeof(u), 1, fp)==1)  // Serialização a partir do arquivo.
+		{		
+			inserirNo(&arvore, novoNo(&u));
+			count++;
+		}
+
+        gotoxy(28,12);
+		printf("%d REGISTROS CARREGADOS COM SUCESSO!", count);
+		gotoxy(28,14);
+		printf("Aperte qualquer tecla para iniciar o LOUConnect!");
+
+		fflush(stdin);
+		getch();  // Continua o programa
+    }
+
+  while(1)
     {
         system("cls");  // Limpa a janela do console.
         gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
@@ -72,7 +107,7 @@ int main()
 	            another = 's';
 	            while(another == 's')  // Se o usuário quiser outro input.
 	            {
-					inserirNo(&arvore, novoNo());
+					inserirNo(&arvore, novoNo(NULL));
 
 	                printf("\nAdicionar outro Usuario? (s/n) ");
 	                fflush(stdin);
@@ -106,7 +141,7 @@ int main()
 					if (temp != NULL)
 					{
 						printf("\nNome: %s", temp->nome);
-						printf("\nData de Nascimento: %d/%d/%d", temp->niver->dia, temp->niver->mes, temp->niver->ano);
+						printf("\nData de Nascimento: %d/%d/%d", temp->niver.dia, temp->niver.mes, temp->niver.ano);
 					}
 					else
 						printf("\nUsuario nao encontrado.");
@@ -149,9 +184,9 @@ int main()
         						break;
         					case '2':
         						printf("\nDigite a nova data de nascimento no formato DD MM AAAA: ");
-								scanf("%d", &temp->niver->dia);
-								scanf("%d", &temp->niver->mes);
-								scanf("%d", &temp->niver->ano);
+								scanf("%d", &temp->niver.dia);
+								scanf("%d", &temp->niver.mes);
+								scanf("%d", &temp->niver.ano);
 								printf("\nData de nascimento alterado com sucesso!");
 								break;
         				}
@@ -179,34 +214,58 @@ int main()
 	            }
 	            break;
 	        case '6':  // Sai do programa. Aqui seria a serialização da árvore?
-	            return 0;
+				fp = freopen("USER.DAT", "wb+", fp);
+
+				system("cls");  // Limpa a janela do console.
+				gotoxy(28,10);
+				printf("SALVANDO REGISTROS...");
+
+                varrerArvore(arvore, fp);
+				fclose(fp);
+
+				gotoxy(28,12);
+				printf("%d REGISTROS SALVOS COM SUCESSO!");
+				gotoxy(28,14);
+				printf("Aperte qualquer tecla para encerrar o programa.");
+
+				fflush(stdin);
+				getch();
+	            exit(0);  // Encerra programa com sucesso.
         }
 	}
 }
 
-USER* novoNo(void)
+USER* novoNo(USER* No)
 {
 	USER* novoUser = (USER*)malloc(sizeof(USER));
 	novoUser->esquerda = NULL;
 	novoUser->direita = NULL;
+
+	if (No != NULL)
+	{
+		*novoUser = *No;
+		novoUser->esquerda = NULL;
+		novoUser->direita = NULL;
+		return novoUser;
+	} 
 
 	char nome[10];
 	printf("\nInsira o nome que deseja adicionar: ");
 	scanf("%s", nome);
 	strcpy(novoUser->nome, nome);
 
-	DATA* niver = (DATA*)malloc(sizeof(DATA));
 	printf("\nDigite sua data de nascimento no formato DD MM AAAA: ");
-	scanf("%d", &niver->dia);
-	scanf("%d", &niver->mes);
-	scanf("%d", &niver->ano);
-	novoUser->niver = niver;
+	scanf("%d", &novoUser->niver.dia);
+	scanf("%d", &novoUser->niver.mes);
+	scanf("%d", &novoUser->niver.ano);
 
 	return novoUser;
 }
 
 void inserirNo(USER** arvore, USER* novoUser)  // Cria novo nó, as informações novas são inseridas dentro da própria função.
 {
+	novoUser->esquerda = NULL;
+	novoUser->direita = NULL;
 	if (*arvore == NULL)
         *arvore = novoUser;
     else
@@ -245,6 +304,16 @@ void exibirPos(USER* arvore)  // Função que printa as chaves em Pós-ordem.
 		exibirPos(arvore->esquerda);
 		exibirPos(arvore->direita);
 		printf("\n%s", arvore->nome);
+	}
+}
+
+void varrerArvore(USER* No, FILE* fp)
+{
+	if (No != NULL)
+	{
+		fwrite(No, sizeof(USER), 1, fp);
+		varrerArvore(No->esquerda, fp);
+		varrerArvore(No->direita, fp);
 	}
 }
 
