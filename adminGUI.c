@@ -13,7 +13,7 @@ typedef struct Data{
 
 // Struct que guarda informações de um usuário.
 typedef struct USER{
-	char nome[10], cpf[14], email[30];
+	char nome[10], cpf[15], email[30];
 	DATA niver;
 
 	struct USER* esquerda;
@@ -44,7 +44,7 @@ int main()
 	USER* arvore = NULL;  // Criação da Árvore
 	USER* temp;  // Auxiliar para alteçao
 	USER u;  // Auxiliar para des-serializar arvore
-	char nome[10], alter[10];   // Auxiliares de busca e alteração
+	char nome[10], alter[10], alter2[15], alter3[30];   // Auxiliares de busca e alteração
 	char another, choice;  // Auxiliares de escolha na GUI
 
   	// Criação ou reload de árvore.
@@ -141,6 +141,8 @@ int main()
 					{
 						printf("\nNome: %s", temp->nome);
 						printf("\nData de Nascimento: %d/%d/%d", temp->niver.dia, temp->niver.mes, temp->niver.ano);
+                      	printf("\nCPF: %s", temp->cpf);
+                      	printf("\nEmail: %s", temp->email);
 					}
 					else
 						printf("\nUsuario nao encontrado.");
@@ -169,6 +171,10 @@ int main()
 				        gotoxy(30,14);
 				        printf("2. Data de Aniversario");
 				        gotoxy(30,16);
+						printf("3. CPF");
+						gotoxy(30,18);
+						printf("4. Email");
+						gotoxy(30,20);
 				        printf("Escolha: ");
 
 				        fflush(stdin);
@@ -188,6 +194,17 @@ int main()
 								scanf("%d", &temp->niver.ano);
 								printf("\nData de nascimento alterado com sucesso!");
 								break;
+							case '3':
+								printf("\nDigite o novo CPF: ");
+								scanf("%s", alter2);
+                            	strcpy(temp->cpf, alter2);
+								break;
+							case '4':
+								printf("\nDigite o novo email: ");
+								scanf("%s", alter3);
+                            	strcpy(temp->email, alter3);
+								break;
+
         				}
 	                }
 	                else printf("\nERRO: Usuario nao encontrado!");  // Não encontrou usuário sob este nome
@@ -223,7 +240,7 @@ int main()
 				fclose(fp);
 
 				gotoxy(28,12);
-				printf("%d REGISTROS SALVOS COM SUCESSO!");
+				printf("REGISTROS SALVOS COM SUCESSO!");
 				gotoxy(28,14);
 				printf("Aperte qualquer tecla para encerrar o programa.");
 
@@ -258,7 +275,7 @@ USER* novoNo(USER* No)
 	scanf("%d", &novoUser->niver.mes);
 	scanf("%d", &novoUser->niver.ano);
 
-	char cpf[10];
+	char cpf[15];
 	printf("\nDigite seu CPF: ");
 	scanf("%s", cpf);
 	strcpy(novoUser->cpf, cpf);
