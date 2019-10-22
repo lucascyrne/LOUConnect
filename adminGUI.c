@@ -84,7 +84,7 @@ int main()
     {
         system("cls");  // Limpa a janela do console.
         gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
-        printf("1. Adicionar Usuario"); 
+        printf("1. Cadastrar Usuario"); 
         gotoxy(30,12);
         printf("2. Listar Usuarios");
         gotoxy(30,14);
@@ -117,14 +117,9 @@ int main()
 	        case '2':  // Exibe o nome de todos os USERS da árvore, em todos os 3 tipos de formato de procura.
 	            system("cls");
 
-				printf("\n\nPre-Ordem:");
-				exibirPre(arvore);
-
-				printf("\n\nPos-Ordem:");
-				exibirPos(arvore);
-
-				printf("\n\nIn-Ordem:");
+				printf("\n================");
 			    exibirIn(arvore);
+				printf("\n================");
 
 	            getch();
 	            break;
@@ -145,9 +140,9 @@ int main()
                       	printf("\nEmail: %s", temp->email);
 					}
 					else
-						printf("\nUsuario nao encontrado.");
+						printf("\n<< ERRO: Usuario nao encontrado. >>");
 
-					printf("\nBuscar outro Usuario? (s/n) ");
+					printf("\n\nBuscar outro Usuario? (s/n) ");
 					fflush(stdin);
 					another = getche();
 				}
@@ -207,7 +202,7 @@ int main()
 
         				}
 	                }
-	                else printf("\nERRO: Usuario nao encontrado!");  // Não encontrou usuário sob este nome
+	                else printf("\n<< ERRO: Usuario nao encontrado. >>");  // Não encontrou usuário sob este nome
 
 	                printf("\nModificar outro registro? (s/n)");
 	                fflush(stdin);
@@ -318,7 +313,7 @@ void exibirIn(USER* arvore)  // Função que printa as chaves em In-ordem.
 	if (arvore != NULL)
 	{
 		exibirIn(arvore->esquerda);
-		printf("\n%s", arvore->nome);
+		printf("\n| %s", arvore->nome);
 		exibirIn(arvore->direita);
 	}
 }
