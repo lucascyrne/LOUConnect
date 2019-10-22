@@ -13,7 +13,7 @@ typedef struct Data{
 
 // Struct que guarda informações de um usuário.
 typedef struct USER{
-	char nome[10];
+	char nome[10], cpf[14], email[30];
 	DATA niver;
 
 	struct USER* esquerda;
@@ -124,7 +124,6 @@ int main()
 				exibirPos(arvore);
 
 				printf("\n\nIn-Ordem:");
-
 			    exibirIn(arvore);
 
 	            getch();
@@ -259,6 +258,16 @@ USER* novoNo(USER* No)
 	scanf("%d", &novoUser->niver.mes);
 	scanf("%d", &novoUser->niver.ano);
 
+	char cpf[10];
+	printf("\nDigite seu CPF: ");
+	scanf("%s", cpf);
+	strcpy(novoUser->cpf, cpf);
+
+	char email[30];
+	printf("\nDigite seu email: ");
+	scanf("%s", email);
+	strcpy(novoUser->email, email);
+
 	return novoUser;
 }
 
@@ -274,6 +283,16 @@ void inserirNo(USER** arvore, USER* novoUser)  // Cria novo nó, as informaçõe
             inserirNo(&(*arvore)->esquerda, novoUser);
         else
         	inserirNo(&(*arvore)->direita, novoUser);
+
+		if (strcmp(novoUser->cpf, (*arvore)->cpf) <= 0)
+			inserirNo(&(*arvore)->esquerda, novoUser);
+		else
+			inserirNo(&(*arvore)->direita, novoUser);
+
+		if (strcmp(novoUser->email, (*arvore)->email) <= 0)
+			inserirNo(&(*arvore)->esquerda, novoUser);
+		else
+			inserirNo(&(*arvore)->direita, novoUser);
     }
 }
 
