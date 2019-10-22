@@ -283,16 +283,6 @@ void inserirNo(USER** arvore, USER* novoUser)  // Cria novo nó, as informaçõe
             inserirNo(&(*arvore)->esquerda, novoUser);
         else
         	inserirNo(&(*arvore)->direita, novoUser);
-
-		if (strcmp(novoUser->cpf, (*arvore)->cpf) <= 0)
-			inserirNo(&(*arvore)->esquerda, novoUser);
-		else
-			inserirNo(&(*arvore)->direita, novoUser);
-
-		if (strcmp(novoUser->email, (*arvore)->email) <= 0)
-			inserirNo(&(*arvore)->esquerda, novoUser);
-		else
-			inserirNo(&(*arvore)->direita, novoUser);
     }
 }
 
