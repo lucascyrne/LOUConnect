@@ -15,7 +15,6 @@ typedef struct Data{
 typedef struct USER{
 	char nome[10], cpf[15], email[30];
 	DATA niver;
-
 	struct USER* esquerda;
 	struct USER* direita;
 }USER;
@@ -40,12 +39,12 @@ USER* deletarNo(USER*, char*);
 
 int main()
 {
-	FILE* fp;  // Ponteiros de arquivo
-	USER* arvore = NULL;  // Criação da Árvore
-	USER* temp;  // Auxiliar para alteçao
-	USER u;  // Auxiliar para des-serializar arvore
+	FILE* fp;  				// Ponteiros de arquivo
+	USER* arvore = NULL;  	// Criação da Árvore
+	USER* temp;  			// Auxiliar para alteçao
+	USER u;  				// Auxiliar para des-serializar arvore
+	char another, choice;	// Auxiliares de escolha na GUI
 	char nome[10], alter[10], alter2[15], alter3[30];   // Auxiliares de busca e alteração
-	char another, choice;  // Auxiliares de escolha na GUI
 
   	// Criação ou reload de árvore.
 	fp = fopen("USER.DAT", "rb+");
@@ -65,7 +64,7 @@ int main()
 		printf("CARREGANDO REGISTROS...");
 
 		int count = 0;
-		while(fread(&u, sizeof(u), 1, fp)==1)  // Serialização a partir do arquivo.
+		while(fread(&u, sizeof(u), 1, fp)==1)  // Des-serialização a partir do arquivo.
 		{		
 			inserirNo(&arvore, novoNo(&u));
 			count++;
@@ -109,12 +108,12 @@ int main()
 	            {
 					inserirNo(&arvore, novoNo(NULL));
 
-	                printf("\nAdicionar outro Usuario? (s/n) ");
+	                printf("\n\nAdicionar outro Usuario? (s/n) ");
 	                fflush(stdin);
 	                another = getche();
 	            }
 	            break;
-	        case '2':  // Exibe o nome de todos os USERS da árvore, em todos os 3 tipos de formato de procura.
+	        case '2':  // Exibe o nome de todos os USERS da árvore In-Ordem (Ordem Alfabética)
 	            system("cls");
 
 				printf("\n================");
@@ -204,12 +203,12 @@ int main()
 	                }
 	                else printf("\n<< ERRO: Usuario nao encontrado. >>");  // Não encontrou usuário sob este nome
 
-	                printf("\nModificar outro registro? (s/n)");
+	                printf("\n\nModificar outro registro? (s/n)");
 	                fflush(stdin);
 	                another = getche();
 	            }
 	            break;
-	        case '5':  // Deleta um USER da árvore, e a reconstrói.
+	        case '5':  // Deleta um USER da árvore, e a reconstrói adequadamente.
 	            system("cls");
 	            another = 's';
 	            while(another == 's')
@@ -224,14 +223,14 @@ int main()
 	                another = getche();
 	            }
 	            break;
-	        case '6':  // Sai do programa. Aqui seria a serialização da árvore?
+	        case '6':  // Encerra o programa, e inicia a serialização de dados para garantir persistência.
 				fp = freopen("USER.DAT", "wb+", fp);
 
 				system("cls");  // Limpa a janela do console.
 				gotoxy(28,10);
 				printf("SALVANDO REGISTROS...");
 
-                varrerArvore(arvore, fp);
+                varrerArvore(arvore, fp);  // Serializa a árvore.
 				fclose(fp);
 
 				gotoxy(28,12);
@@ -382,7 +381,7 @@ USER* deletarNo(USER* raiz, char* nome)  // Função que busca nós pela sua cha
 		// (o menor na subárvore da direita)
 		USER* atual = raiz->direita; 
   
-	    /* loop down to find the leftmost leaf */
+	    // Acha a folha na ponta da esquerda.
 	    while (atual && atual->esquerda != NULL)
 	        atual = atual->esquerda; 
 		USER* temp = atual;
