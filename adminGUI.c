@@ -1,7 +1,7 @@
-#include <stdio.h>  //Para funções de input e output like.
+#include <stdio.h>   // Para funções de input e output.
 #include <stdlib.h>  // Para funções de gerenciamento de memória.
-#include <conio.h>  // Para funções que movem o no console.
-#include <windows.h>  // Para funções relacionadas ao OS Windows. Neste caso, só usei para dar "cls" e limpar a tela do console.
+#include <conio.h>   // Para funções que movem o cursor de escrita, e gerenciam entrada e saída de caracteres.
+#include <windows.h> // Para funções relacionadas ao OS Windows. Neste caso, só está sendo usada para dar "cls" e limpar a tela do console.
 #include <string.h>  // Para operações de Strings, muito importante.
 
 // Struct que guarda uma data. Será usado para aniversário.
@@ -28,12 +28,12 @@ void gotoxy(int x,int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
 }
 
-USER* novoNo(USER*);
+USER* novoNo(USER*); 
 void inserirNo(USER**, USER*);
 void exibirPre(USER*);
 void exibirIn(USER*);
 void exibirPos(USER*);
-void varrerArvore(USER*, FILE*);
+void serializar(USER*, FILE*);
 USER* buscarNo(USER*, char*);
 USER* deletarNo(USER*, char*);
 
@@ -208,7 +208,7 @@ int main()
 	                another = getche();
 	            }
 	            break;
-	        case '5':  // Deleta um USER da árvore, e a reconstrói adequadamente.
+	        case '5':  // Deleta um USER da árvore.
 	            system("cls");
 	            another = 's';
 	            while(another == 's')
@@ -230,7 +230,7 @@ int main()
 				gotoxy(28,10);
 				printf("SALVANDO REGISTROS...");
 
-                varrerArvore(arvore, fp);  // Serializa a árvore.
+                serializar(arvore, fp);  // Serializa a árvore.
 				fclose(fp);
 
 				gotoxy(28,12);
@@ -245,7 +245,7 @@ int main()
 	}
 }
 
-USER* novoNo(USER* No)
+USER* novoNo(USER* No)   // Cria um novo nó caso a entrada seja nulla. Caso a entrada seja outro nó, apenas gera um novo e copia as informações para ele.
 {
 	USER* novoUser = (USER*)malloc(sizeof(USER));
 	novoUser->esquerda = NULL;
@@ -282,7 +282,7 @@ USER* novoNo(USER* No)
 	return novoUser;
 }
 
-void inserirNo(USER** arvore, USER* novoUser)  // Cria novo nó, as informações novas são inseridas dentro da própria função.
+void inserirNo(USER** arvore, USER* novoUser)  // Insere um nó na arvore, comparação igual vão para esquerda, maneira clássica. 
 {
 	novoUser->esquerda = NULL;
 	novoUser->direita = NULL;
@@ -327,17 +327,17 @@ void exibirPos(USER* arvore)  // Função que printa as chaves em Pós-ordem.
 	}
 }
 
-void varrerArvore(USER* No, FILE* fp)
+void serializar(USER* No, FILE* fp)  // Executa a serialização da árvore (Escrita dela num arquivo, para garantir a persistência dos dados)
 {
 	if (No != NULL)
 	{
 		fwrite(No, sizeof(USER), 1, fp);
-		varrerArvore(No->esquerda, fp);
-		varrerArvore(No->direita, fp);
+		serializar(No->esquerda, fp);
+		serializar(No->direita, fp);
 	}
 }
 
-USER* buscarNo(USER* raiz, char* nome)  // Função que busca Nós por sua chave e os retorna.
+USER* buscarNo(USER* raiz, char* nome)  // Função recursiva que busca Nós por sua chave e os retorna. Caso não ache, valor é Nulo.
 {
 	if (raiz == NULL || strcmp(raiz->nome, nome) == 0)
     	return raiz; 
@@ -350,7 +350,7 @@ USER* buscarNo(USER* raiz, char* nome)  // Função que busca Nós por sua chave
     return buscarNo(raiz->esquerda, nome); 
 }
 
-USER* deletarNo(USER* raiz, char* nome)  // Função que busca nós pela sua chave, e os apaga da memória.
+USER* deletarNo(USER* raiz, char* nome)  // Função recursiva que busca por um nó pelo seu valor e o apaga da memória, após isso é feita uma reconstrução adequada da árvore.
 {
 	if (raiz == NULL) return raiz;
 
