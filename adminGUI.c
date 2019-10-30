@@ -44,8 +44,8 @@ int main()
 	USER* arvore = NULL;  // Criação da Árvore
 	USER* temp;  // Auxiliar para alteçao
 	USER u;  // Auxiliar para des-serializar arvore
-	char nome[10], alter[10], alter2[15], alter3[30];   // Auxiliares de busca e alteração
-	char another, choice;  // Auxiliares de escolha na GUI
+	char nome[10], alter[10];   // Auxiliares de busca e alteração
+	char another, another2, choice;  // Auxiliares de escolha na GUI
 
   	// Criação ou reload de árvore.
 	fp = fopen("USER.DAT", "rb+");
@@ -141,13 +141,11 @@ int main()
 					{
 						printf("\nNome: %s", temp->nome);
 						printf("\nData de Nascimento: %d/%d/%d", temp->niver.dia, temp->niver.mes, temp->niver.ano);
-                      	printf("\nCPF: %s", temp->cpf);
-                      	printf("\nEmail: %s", temp->email);
 					}
 					else
 						printf("\nUsuario nao encontrado.");
 
-					printf("\nBuscar outro Usuario? (s/n) ");
+					printf("\n\nBuscar outro Usuario? (s/n) ");
 					fflush(stdin);
 					another = getche();
 				}
@@ -155,59 +153,78 @@ int main()
 	        case '4':  // Modifica informações de um USER.
 	            system("cls");
 	            another = 's';
+				another2 = 's';
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome do usuario que deseja alterar: ");
 	                scanf("%s",nome);
 
 	                temp = buscarNo(arvore, nome);
-	                if (temp != NULL)  // Encontrou
-	                {
-		                system("cls");
-				        gotoxy(30,10);
-				        printf("Usuario %s encontrado. O que deseja alterar?", nome); 
-				        gotoxy(30,12);
-				        printf("1. Nome");
-				        gotoxy(30,14);
-				        printf("2. Data de Aniversario");
-				        gotoxy(30,16);
-						printf("3. CPF");
-						gotoxy(30,18);
-						printf("4. Email");
-						gotoxy(30,20);
-				        printf("Escolha: ");
+					while(another2 == 's') 
+					{
+						if (temp != NULL)  // Encontrou
+						{
+							system("cls");
+							gotoxy(30,10);
+							printf("Usuario %s encontrado. O que deseja alterar?", nome); 
+							gotoxy(30,12);
+							printf("1. Nome");
+							gotoxy(30,14);
+							printf("2. Data de Aniversario");
+							gotoxy(30,16);
+							printf("3. CPF");
+							gotoxy(30,18);
+							printf("4. Email");
+							gotoxy(30,20);
+							printf("5. Voltar");
+							gotoxy(30,22);
+							printf("Escolha: ");
 
-				        fflush(stdin);
-        				choice  = getche();
-        				switch(choice)
-        				{
-        					case '1':
-        						printf("\nDigite o novo nome: ");
-	                			scanf("%s",alter);
-	                			strcpy(temp->nome, alter);
-	                			printf("\nNome alterado com sucesso!");
-        						break;
-        					case '2':
-        						printf("\nDigite a nova data de nascimento no formato DD MM AAAA: ");
+							fflush(stdin);
+							choice  = getche();
+							
+								
+							switch(choice)
+							{
+							case '1':
+								gotoxy(30,26);
+								printf("\n\nDigite o novo nome: ");
+								scanf("%s",alter);
+								strcpy(temp->nome, alter);
+								printf("\nNome alterado com sucesso!");
+								break;
+							case '2':
+								gotoxy(30,26);
+								printf("\n\nDigite a nova data de nascimento no formato DD MM AAAA: ");
 								scanf("%d", &temp->niver.dia);
 								scanf("%d", &temp->niver.mes);
 								scanf("%d", &temp->niver.ano);
 								printf("\nData de nascimento alterado com sucesso!");
 								break;
 							case '3':
-								printf("\nDigite o novo CPF: ");
-								scanf("%s", alter2);
-                            	strcpy(temp->cpf, alter2);
+								gotoxy(30,26);
+								printf("\n\nDigite o novo CPF: ");
+								scanf("%s", &temp->cpf);
+								printf("\nNovo CPF alterado com sucesso!");
 								break;
 							case '4':
-								printf("\nDigite o novo email: ");
-								scanf("%s", alter3);
-                            	strcpy(temp->email, alter3);
+								gotoxy(30,26);
+								printf("\n\nDigite o novo email: ");
+								scanf("%s", &temp->email);
+								printf("\nEmail alterado com sucesso!");
 								break;
+							case '5':
+								break;
+							}
+							printf("\n\nVoce deseja alterar mais campos? (s/n)");
+							fflush(stdin);
+							another2 = getche();
 
-        				}
-	                }
-	                else printf("\nERRO: Usuario nao encontrado!");  // Não encontrou usuário sob este nome
+							
+						}
+						else printf("\nERRO: Usuario nao encontrado!");  // Não encontrou usuário sob este nome
+					}
+
 
 	                printf("\nModificar outro registro? (s/n)");
 	                fflush(stdin);
@@ -240,7 +257,7 @@ int main()
 				fclose(fp);
 
 				gotoxy(28,12);
-				printf("REGISTROS SALVOS COM SUCESSO!");
+				printf("%d REGISTROS SALVOS COM SUCESSO!");
 				gotoxy(28,14);
 				printf("Aperte qualquer tecla para encerrar o programa.");
 
@@ -275,7 +292,7 @@ USER* novoNo(USER* No)
 	scanf("%d", &novoUser->niver.mes);
 	scanf("%d", &novoUser->niver.ano);
 
-	char cpf[15];
+	char cpf[14];
 	printf("\nDigite seu CPF: ");
 	scanf("%s", cpf);
 	strcpy(novoUser->cpf, cpf);
