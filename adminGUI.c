@@ -3,6 +3,9 @@
 #include <conio.h>   // Para funções que movem o cursor de escrita, e gerenciam entrada e saída de caracteres.
 #include <windows.h> // Para funções relacionadas ao OS Windows. Neste caso, só está sendo usada para dar "cls" e limpar a tela do console.
 #include <string.h>  // Para operações de Strings, muito importante.
+#define max(a,b) (((a) > (b)) ? (a) : (b))	// Achar maior valor rapidamente.
+#define MAX_NOME 50  						// Tamanho máximo do fluxo de caracteres para o campo nome.
+#define MAX_OCUP 100 						// Tamanho máximo do fluxo de caracteres para o campo ocupação.
 
 // Struct que guarda uma data. Será usado para aniversário.
 typedef struct Data{
@@ -17,6 +20,7 @@ typedef struct USER{
 	DATA niver;
 	struct USER* esquerda;
 	struct USER* direita;
+	int altura;
 }USER;
 
 // <conio.h> :: Variável e função que conseguem mover o cursor de escrita e leitura no console (CMD), com coordenadas X e Y.
@@ -29,16 +33,17 @@ void gotoxy(int x,int y)
 }
 
 USER* novoNo(USER*); 
-void inserirNo(USER**, USER*);
+USER* inserirNo(USER*, USER*);
 void exibirPre(USER*);
 void exibirIn(USER*);
 void exibirPos(USER*);
 void serializar(USER*, FILE*);
 USER* buscarNo(USER*, char*);
 USER* deletarNo(USER*, char*);
-
-#define MAX1 50
-#define MAX4 100 
+int alturaNo(USER*);
+USER* rotDireita(USER*);
+USER* rotEsquerda(USER*);
+int fatorNo(USER*);
 
 int main()
 {
@@ -47,7 +52,7 @@ int main()
 	USER* temp;  			// Auxiliar para alteçao
 	USER u;  				// Auxiliar para des-serializar arvore
 	char another, choice;	// Auxiliares de escolha na GUI
-	char nome[50], alter[50], alter2[15], alter3[30], alter4[100];   // Auxiliares de busca e alteração
+	char nome[50], alter_nome[50], alter_cpf[15], alter_email[30], alter_ocupacao[100];   // Auxiliares de busca e alteração
 
   	// Criação ou reload de árvore.
 	fp = fopen("USER.DAT", "rb+");
@@ -69,7 +74,7 @@ int main()
 		int count = 0;
 		while(fread(&u, sizeof(u), 1, fp)==1)  // Des-serialização a partir do arquivo.
 		{		
-			inserirNo(&arvore, novoNo(&u));
+			arvore = inserirNo(arvore, novoNo(&u));
 			count++;
 		}
 
@@ -109,7 +114,7 @@ int main()
 	            another = 's';
 	            while(another == 's')  // Se o usuário quiser outro input.
 	            {
-					inserirNo(&arvore, novoNo(NULL));
+					arvore = inserirNo(arvore, novoNo(NULL));
 
 	                printf("\n\nAdicionar outro Usuario? (s/n) ");
 	                fflush(stdin);
@@ -136,7 +141,7 @@ int main()
 				while(another == 's')
 				{
 					printf("\nInsira o nome do usuario que deseja buscar: ");
-					fgets(nome, MAX1, stdin);	
+					fgets(nome, MAX_NOME, stdin);	
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
   				    	nome[strlen (nome) - 1] = '\0';
 					temp = buscarNo(arvore, nome);
@@ -162,7 +167,7 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome do usuario que deseja alterar: ");
-	                fgets(nome, MAX1, stdin);
+	                fgets(nome, MAX_NOME, stdin);
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
         				nome[strlen (nome) - 1] = '\0';
 	                temp = buscarNo(arvore, nome);
@@ -190,10 +195,10 @@ int main()
         				{
         					case '1':
         						printf("\nDigite o novo nome: ");
-	                			fgets(alter, MAX1, stdin);
-								if ((strlen(alter) > 0) && (alter[strlen(alter) - 1] == '\n'))
-        							alter[strlen (alter) - 1] = '\0';
-	                			strcpy(temp->nome, alter);
+	                			fgets(alter_nome, MAX_NOME, stdin);
+								if ((strlen(alter_nome) > 0) && (alter_nome[strlen(alter_nome) - 1] == '\n'))
+        							alter_nome[strlen (alter_nome) - 1] = '\0';
+	                			strcpy(temp->nome, alter_nome);
 	                			printf("\nNome alterado com sucesso!");
         						break;
         					case '2':
@@ -205,22 +210,22 @@ int main()
 								break;
 							case '3':
 								printf("\nDigite o novo CPF: ");
-								scanf("%s", alter2);
-                            	strcpy(temp->cpf, alter2);
+								scanf("%s", alter_cpf);
+                            	strcpy(temp->cpf, alter_cpf);
                             	printf("\nCPF alterado com sucesso!");
 								break;
 							case '4':
 								printf("\nDigite o novo email: ");
-								scanf("%s", alter3);
-                            	strcpy(temp->email, alter3);
+								scanf("%s", alter_email);
+                            	strcpy(temp->email, alter_email);
                             	printf("\nEmail alterado com sucesso!");
 								break;
 							case '5':
 								printf("\nDigite a nova ocupacao: ");
-								fgets(alter4, MAX4, stdin);
-								if ((strlen(alter4) > 0) && (alter4[strlen(alter4) - 1] == '\n'))
-        							alter4[strlen(alter4) - 1] = '\0';
-								strcpy(temp->ocupacao, alter4);
+								fgets(alter_ocupacao, MAX_OCUP, stdin);
+								if ((strlen(alter_ocupacao) > 0) && (alter_ocupacao[strlen(alter_ocupacao) - 1] == '\n'))
+        							alter_ocupacao[strlen(alter_ocupacao) - 1] = '\0';
+								strcpy(temp->ocupacao, alter_ocupacao);
 								printf("\nOcupacao alterada com sucesso!");
 								break;
         				}
@@ -238,7 +243,7 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome que deseja deletar: ");
-	                fgets(nome, MAX1, stdin);
+	                fgets(nome, MAX_NOME, stdin);
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
         				nome[strlen (nome) - 1] = '\0';
 
@@ -274,30 +279,33 @@ int main()
 USER* novoNo(USER* No)   // Cria um novo nó caso a entrada seja nulla. Caso a entrada seja outro nó, apenas gera um novo e copia as informações para ele.
 {
 	USER* novoUser = (USER*)malloc(sizeof(USER));
-	novoUser->esquerda = NULL;
-	novoUser->direita = NULL;
 
 	if (No != NULL)
 	{
 		*novoUser = *No;
 		novoUser->esquerda = NULL;
 		novoUser->direita = NULL;
+		novoUser->altura = 1;
 		return novoUser;
-	} 
+	}
+
+	novoUser->esquerda = NULL;
+	novoUser->direita = NULL;
+	novoUser->altura = 1;
 
 	char infoUser[2][50];
 	int s;
 	for(s = 0; s <= 2; s++){
 		if(s = 1){
 			printf("\nInsira o nome que deseja adicionar: ");
-			fgets(infoUser[0], MAX1, stdin);
+			fgets(infoUser[0], MAX_NOME, stdin);
 			if ((strlen(infoUser[0]) > 0) && (infoUser[0][strlen(infoUser[0]) - 1] == '\n'))
    		 	    infoUser[0][strlen (infoUser[0]) - 1] = '\0'; // tirar o \n no final da string que entrou por conta do fgets()
  			strcpy(novoUser->nome, infoUser[0]);
 		}
 		if(s = 2){
 			printf("\nDigite sua ocupacao em no maximo 100 caracteres: ");
-			fgets(infoUser[1], MAX4, stdin);
+			fgets(infoUser[1], MAX_OCUP, stdin);
 			if ((strlen(infoUser[1]) > 0) && (infoUser[1][strlen(infoUser[1]) - 1] == '\n'))
    	    		infoUser[1][strlen(infoUser[1]) - 1] = '\0';
 			strcpy(novoUser->ocupacao, infoUser[1]);
@@ -322,19 +330,55 @@ USER* novoNo(USER* No)   // Cria um novo nó caso a entrada seja nulla. Caso a e
 	return novoUser;
 }
 
-void inserirNo(USER** arvore, USER* novoUser)  // Insere um nó na arvore, comparação igual vão para esquerda, maneira clássica. 
+USER* inserirNo(USER* raiz, USER* novoUser)  // Insere um nó na arvore, comparação igual vão para esquerda, maneira clássica. 
 {
-	novoUser->esquerda = NULL;
-	novoUser->direita = NULL;
-	if (*arvore == NULL)
-        *arvore = novoUser;
-    else
-    {
-        if (strcmp(novoUser->nome, (*arvore)->nome) <= 0)
-            inserirNo(&(*arvore)->esquerda, novoUser);
-        else
-        	inserirNo(&(*arvore)->direita, novoUser);
-    }
+	/******* (PASSO 1) INSERÇÃO BST *******/
+	// Caso 1: Nova raiz da sub-árvore.
+	if (raiz == NULL)
+		return novoUser;
+    
+	// Caso 2: Chave MENOR que a da raiz.
+	if (strcmp(novoUser->nome, raiz->nome) < 0)
+        raiz->esquerda = inserirNo(raiz->esquerda, novoUser);
+    
+	// Caso 3: Chave MAIOR que a da raiz.
+	else if (strcmp(novoUser->nome, raiz->nome) > 0)
+        raiz->direita = inserirNo(raiz->direita, novoUser);
+	
+	// Caso 4: Chaves iguais, não permitido em BSTs.
+	else
+	{
+		printf("<< ERRO: Nome em uso, tente outro >>");
+		return raiz;
+	}
+
+	/****** (PASSO 2) ATUALIZAÇÃO DE ALTURA ******/
+	raiz->altura = 1 + max(alturaNo(raiz->esquerda), alturaNo(raiz->direita));
+
+	/* (3) CHECAR FATOR DE BALANCEAMENTO E REALIZAR ROTAÇÕES SE NECESSÁRIO */
+	int fator = fatorNo(raiz);
+	
+	// Caso LL
+	if (fator > 1 && strcmp(novoUser->nome, raiz->esquerda->nome) < 0)
+		return rotDireita(raiz);
+	// Caso RR
+	if (fator < -1 && strcmp(novoUser->nome, raiz->direita->nome) > 0)
+		return rotEsquerda(raiz);
+	// Caso LR
+	if (fator > 1 && strcmp(novoUser->nome, raiz->esquerda->nome) > 0)
+	{
+		raiz->esquerda = rotEsquerda(raiz->esquerda);
+		return rotDireita(raiz);
+	}
+	// Caso RL
+	if (fator < -1 && strcmp(novoUser->nome, raiz->direita->nome) < 0)
+	{
+		raiz->direita = rotDireita(raiz->direita);
+		return rotEsquerda(raiz);
+	}
+
+	/*** Caso Padrão: Retorna raiz (nó) não alterada ***/
+	return raiz;
 }
 
 void exibirPre(USER* arvore)  // Função que printa as chaves em Pré-ordem.
@@ -382,7 +426,7 @@ USER* buscarNo(USER* raiz, char* nome)  // Função recursiva que busca Nós por
 	if (raiz == NULL || strcmp(raiz->nome, nome) == 0)
     	return raiz; 
      
-    // Key is greater than root's key 
+    //  
     if (strcmp(nome, raiz->nome) > 0) 
        return buscarNo(raiz->direita, nome); 
   
@@ -392,45 +436,132 @@ USER* buscarNo(USER* raiz, char* nome)  // Função recursiva que busca Nós por
 
 USER* deletarNo(USER* raiz, char* nome)  // Função recursiva que busca por um nó pelo seu valor e o apaga da memória, após isso é feita uma reconstrução adequada da árvore.
 {
-	if (raiz == NULL) return raiz;
-
+	/** (PASSO 1) REMOÇÃO PADRÃO DE BST **/
+	
+	// Não encontrou.
+	if (raiz == NULL)
+		return raiz;
+	// Chave MENOR que a da raiz.
 	if (strcmp(nome, raiz->nome) < 0)
 		raiz->esquerda = deletarNo(raiz->esquerda, nome);
-	
+	// Chave MENOR que a da raiz.
 	else if (strcmp(nome, raiz->nome) > 0)
 		raiz->direita = deletarNo(raiz->direita, nome);
 
-	// Se for igual.
+	// Se for igual --> Encontrou o Nó certo.
 	else 
 	{
-		// Nó com um filho ou nenhum filho.
-		if (raiz->esquerda == NULL)
+		// Nó com apenas um ou nenhum filho.
+		if ( (raiz->esquerda == NULL) || (raiz->direita == NULL) )
 		{
-			USER* temp = raiz->direita;
-			free(raiz);
-			return temp;
+			USER* temp = raiz->esquerda ? raiz->esquerda : raiz->direita;
+
+			// Caso de nenhum filho
+			if (temp == NULL)
+			{
+				temp = raiz;
+				raiz = NULL;
+			}
+			// Caso de 1 filho
+			else *raiz = *temp;
+			free(temp);
 		}
-		else if (raiz->direita == NULL)
+		// Nó com 2 filhos
+		else
 		{
-			USER* temp = raiz->esquerda;
-			free(raiz);
-			return temp;
+			// Acha o sucessor InOrdem
+			USER* atual = raiz->direita; 
+			while (atual->esquerda != NULL) 
+				atual = atual->esquerda;
+			// Passa a chave do sucessor para a raiz
+			strcpy(raiz->nome, atual->nome);
+			// Deleta o sucessor
+			raiz->direita = deletarNo(raiz->direita, atual->nome);
 		}
-
-		// Nó com 2 filhos: Pegar o sucessor InOrdem. 
-		// (o menor na subárvore da direita)
-		USER* atual = raiz->direita; 
-  
-	    // Acha a folha na ponta da esquerda.
-	    while (atual && atual->esquerda != NULL)
-	        atual = atual->esquerda; 
-		USER* temp = atual;
-
-		// Copia o valor do sucessor inordem para o Nó.
-		strcpy(raiz->nome, temp->nome);
-
-		// Deleta o sucessor inordem
-		raiz->direita = deletarNo(raiz->direita, temp->nome);
 	}
+
+	// Se a árvore tinha apenas um nó:
+	if (raiz == NULL)
+		return raiz;
+	
+	/*** (PASSO 2) ATUALIZAÇÃO DA ALTURA ***/
+	raiz->altura = 1 + max(alturaNo(raiz->esquerda), alturaNo(raiz->direita));
+
+	/* (PASSO 3) CHECAR FATOR DE BALANCEAMENTO E REALIZAR ROTAÇÕES SE NECESSÁRIO */
+	int fator = fatorNo(raiz);
+	
+	// Caso LL
+	if (fator > 1 && fatorNo(raiz->esquerda) >= 0)
+		return rotDireita(raiz);
+	// Caso RR
+	if (fator < -1 && fatorNo(raiz->direita) <= 0)
+		return rotEsquerda(raiz);
+	// Caso LR
+	if (fator > 1 && fatorNo(raiz->esquerda) < 0)
+	{
+		raiz->esquerda = rotEsquerda(raiz->esquerda);
+		return rotDireita(raiz);
+	}
+	// Caso RL
+	if (fator < -1 && fatorNo(raiz->direita) > 0)
+	{
+		raiz->direita = rotDireita(raiz->direita);
+		return rotEsquerda(raiz);
+	}
+
+	/*** Caso Padrão: Retorna raiz (nó) não alterada ***/
 	return raiz;
+}
+
+int alturaNo(USER* No)
+{
+	if (No == NULL)
+		return 0;
+	else
+		return No->altura;
+}
+
+// Realiza rotação da sub-árvore y pra direita, retorna a nova raiz que fica no lugar de y.
+USER* rotDireita(USER* y)
+{
+	USER* x = y->esquerda;
+	USER* sub = x->direita;
+
+	// Realiza rotação.
+	x->direita = y;
+	y->esquerda = sub;
+
+	// Atualiza altura.
+	y->altura = max(alturaNo(y->esquerda), alturaNo(y->direita)) + 1;
+	x->altura = max(alturaNo(x->esquerda), alturaNo(x->direita)) + 1;
+
+	// Retorna a nova raiz
+	return x;
+}
+
+// Realiza rotação da sub-árvore x pra esquerda, retorna a nova raiz que fica no lugar de x.
+USER* rotEsquerda(USER* x)
+{
+	USER* y = x->direita;
+	USER* sub = y->esquerda;
+
+	// Realiza rotação.
+	y->esquerda = x;
+	x->direita = sub;
+
+	// Atualiza altura.
+	x->altura = max(alturaNo(x->esquerda), alturaNo(x->direita)) + 1;
+	y->altura = max(alturaNo(y->esquerda), alturaNo(y->direita)) + 1;
+
+	// Retorna a nova raiz
+	return y;
+}
+
+// Retorna o fator de balanceamento do nó.
+int fatorNo(USER* No)
+{
+	if (No == NULL)
+		return 0;
+	else
+		return alturaNo(No->esquerda) - alturaNo(No->direita);
 }
