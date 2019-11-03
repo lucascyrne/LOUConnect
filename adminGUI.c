@@ -7,14 +7,14 @@
 
 // Struct que guarda uma data. Será usado para aniversário.
 typedef struct Data{
-	int dia;
+	int dia;	
 	int mes;
 	int ano;
 }DATA;
 
 // Struct que guarda informações de um usuário.
 typedef struct USER{
-	char nome[10], cpf[15], email[30];
+	char nome[50], cpf[15], email[30], ocupacao[100];
 	DATA niver;
 	struct USER* esquerda;
 	struct USER* direita;
@@ -43,6 +43,9 @@ USER* rotDireita(USER*);
 USER* rotEsquerda(USER*);
 int fatorNo(USER*);
 
+#define MAX1 50
+#define MAX4 100 
+
 int main()
 {
 	FILE* fp;  				// Ponteiros de arquivo
@@ -50,7 +53,7 @@ int main()
 	USER* temp;  			// Auxiliar para alteçao
 	USER u;  				// Auxiliar para des-serializar arvore
 	char another, choice;	// Auxiliares de escolha na GUI
-	char nome[10], alter[10], alter2[15], alter3[30];   // Auxiliares de busca e alteração
+	char nome[50], alter[50], alter2[15], alter3[30], alter4[100];   // Auxiliares de busca e alteração
 
   	// Criação ou reload de árvore.
 	fp = fopen("USER.DAT", "rb+");
@@ -117,6 +120,11 @@ int main()
 	                printf("\n\nAdicionar outro Usuario? (s/n) ");
 	                fflush(stdin);
 	                another = getche();
+	                /*while(buscarNo(arvore, another) =! NULL){
+	                	printf("\n\nEsse nome de Usuario ja existe. Tente novamente!");
+	                	fflush(stdin);
+	                	another = getche();
+	                }*/
 	            }
 	            break;
 	        case '2':  // Exibe o nome de todos os USERS da árvore In-Ordem (Ordem Alfabética)
@@ -134,8 +142,9 @@ int main()
 				while(another == 's')
 				{
 					printf("\nInsira o nome do usuario que deseja buscar: ");
-					scanf("%s", nome);
-					
+					fgets(nome, MAX1, stdin);	
+					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
+  				    	nome[strlen (nome) - 1] = '\0';
 					temp = buscarNo(arvore, nome);
 					if (temp != NULL)
 					{
@@ -143,6 +152,7 @@ int main()
 						printf("\nData de Nascimento: %d/%d/%d", temp->niver.dia, temp->niver.mes, temp->niver.ano);
                       	printf("\nCPF: %s", temp->cpf);
                       	printf("\nEmail: %s", temp->email);
+                      	printf("\nOcupacao: %s", temp->ocupacao);
 					}
 					else
 						printf("\n<< ERRO: Usuario nao encontrado. >>");
@@ -158,8 +168,9 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome do usuario que deseja alterar: ");
-	                scanf("%s",nome);
-
+	                fgets(nome, MAX1, stdin);
+					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
+        				nome[strlen (nome) - 1] = '\0';
 	                temp = buscarNo(arvore, nome);
 	                if (temp != NULL)  // Encontrou
 	                {
@@ -175,6 +186,8 @@ int main()
 						gotoxy(30,18);
 						printf("4. Email");
 						gotoxy(30,20);
+						printf("5. Ocupacao");
+						gotoxy(30,22);
 				        printf("Escolha: ");
 
 				        fflush(stdin);
@@ -183,7 +196,9 @@ int main()
         				{
         					case '1':
         						printf("\nDigite o novo nome: ");
-	                			scanf("%s",alter);
+	                			fgets(alter, MAX1, stdin);
+								if ((strlen(alter) > 0) && (alter[strlen(alter) - 1] == '\n'))
+        							alter[strlen (alter) - 1] = '\0';
 	                			strcpy(temp->nome, alter);
 	                			printf("\nNome alterado com sucesso!");
         						break;
@@ -198,13 +213,22 @@ int main()
 								printf("\nDigite o novo CPF: ");
 								scanf("%s", alter2);
                             	strcpy(temp->cpf, alter2);
+                            	printf("\nCPF alterado com sucesso!");
 								break;
 							case '4':
 								printf("\nDigite o novo email: ");
 								scanf("%s", alter3);
                             	strcpy(temp->email, alter3);
+                            	printf("\nEmail alterado com sucesso!");
 								break;
-
+							case '5':
+								printf("\nDigite a nova ocupacao: ");
+								fgets(alter4, MAX4, stdin);
+								if ((strlen(alter4) > 0) && (alter4[strlen(alter4) - 1] == '\n'))
+        							alter4[strlen(alter4) - 1] = '\0';
+								strcpy(temp->ocupacao, alter4);
+								printf("\nOcupacao alterada com sucesso!");
+								break;
         				}
 	                }
 	                else printf("\n<< ERRO: Usuario nao encontrado. >>");  // Não encontrou usuário sob este nome
@@ -220,7 +244,9 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome que deseja deletar: ");
-	                scanf("%s",nome);
+	                fgets(nome, MAX1, stdin);
+					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
+        				nome[strlen (nome) - 1] = '\0';
 
 	                arvore = deletarNo(arvore, nome);
 
@@ -268,10 +294,24 @@ USER* novoNo(USER* No)   // Cria um novo nó caso a entrada seja nulla. Caso a e
 	novoUser->direita = NULL;
 	novoUser->altura = 1;
 
-	char nome[10];
-	printf("\nInsira o nome que deseja adicionar: ");
-	scanf("%s", nome);
-	strcpy(novoUser->nome, nome);
+	char infoUser[2][50];
+	int s;
+	for(s = 0; s <= 2; s++){
+		if(s = 1){
+			printf("\nInsira o nome que deseja adicionar: ");
+			fgets(infoUser[0], MAX1, stdin);
+			if ((strlen(infoUser[0]) > 0) && (infoUser[0][strlen(infoUser[0]) - 1] == '\n'))
+   		 	    infoUser[0][strlen (infoUser[0]) - 1] = '\0'; // tirar o \n no final da string que entrou por conta do fgets()
+ 			strcpy(novoUser->nome, infoUser[0]);
+		}
+		if(s = 2){
+			printf("\nDigite sua ocupacao em no maximo 100 caracteres: ");
+			fgets(infoUser[1], MAX4, stdin);
+			if ((strlen(infoUser[1]) > 0) && (infoUser[1][strlen(infoUser[1]) - 1] == '\n'))
+   	    		infoUser[1][strlen(infoUser[1]) - 1] = '\0';
+			strcpy(novoUser->ocupacao, infoUser[1]);
+		}
+	}
 
 	printf("\nDigite sua data de nascimento no formato DD MM AAAA: ");
 	scanf("%d", &novoUser->niver.dia);
