@@ -4,9 +4,6 @@
 #include <windows.h> // Para funções relacionadas ao OS Windows. Neste caso, só está sendo usada para dar "cls" e limpar a tela do console.
 #include <string.h>  // Para operações de Strings, muito importante.
 
-// MAXs para serem usados no fgets().
-#define MAX 50 
-
 // Struct que guarda uma data. Será usado para aniversário.
 typedef struct Data{
 	int dia;	
@@ -31,7 +28,7 @@ void gotoxy(int x,int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
 }
 
-USER* novoNo(USER*, USER*); 
+USER* novoNo(USER*); 
 void inserirNo(USER**, USER*);
 void exibirPre(USER*);
 void exibirIn(USER*);
@@ -39,6 +36,9 @@ void exibirPos(USER*);
 void serializar(USER*, FILE*);
 USER* buscarNo(USER*, char*);
 USER* deletarNo(USER*, char*);
+
+#define MAX1 50
+#define MAX4 100 
 
 int main()
 {
@@ -69,7 +69,7 @@ int main()
 		int count = 0;
 		while(fread(&u, sizeof(u), 1, fp)==1)  // Des-serialização a partir do arquivo.
 		{		
-			inserirNo(&arvore, novoNo(&u, arvore));
+			inserirNo(&arvore, novoNo(&u));
 			count++;
 		}
 
@@ -109,7 +109,7 @@ int main()
 	            another = 's';
 	            while(another == 's')  // Se o usuário quiser outro input.
 	            {
-					inserirNo(&arvore, novoNo(NULL, arvore));
+					inserirNo(&arvore, novoNo(NULL));
 
 	                printf("\n\nAdicionar outro Usuario? (s/n) ");
 	                fflush(stdin);
@@ -136,7 +136,7 @@ int main()
 				while(another == 's')
 				{
 					printf("\nInsira o nome do usuario que deseja buscar: ");
-					fgets(nome, MAX, stdin);	
+					fgets(nome, MAX1, stdin);	
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
   				    	nome[strlen (nome) - 1] = '\0';
 					temp = buscarNo(arvore, nome);
@@ -162,7 +162,7 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome do usuario que deseja alterar: ");
-	                fgets(nome, MAX, stdin);
+	                fgets(nome, MAX1, stdin);
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
         				nome[strlen (nome) - 1] = '\0';
 	                temp = buscarNo(arvore, nome);
@@ -189,20 +189,11 @@ int main()
         				switch(choice)
         				{
         					case '1':
-        						while(1)
-        						{
-	        						printf("\nDigite o novo nome: ");
-		                			fgets(alter, MAX, stdin);
-									if ((strlen(alter) > 0) && (alter[strlen(alter) - 1] == '\n'))
-	        							alter[strlen (alter) - 1] = '\0';
-		                			if(buscarNo(arvore, alter) == NULL)// Checa se o nome já existe.	
-		                			{
-						 				strcpy(temp->nome, alter);
-						 				break; //nome não foi achado, então o loop eh quebrado e o programa continua
-						 			}
-	 								else
-					 					printf("\nNome ja existente, %s tente novamente!", alter);
-				 				} 
+        						printf("\nDigite o novo nome: ");
+	                			fgets(alter, MAX1, stdin);
+								if ((strlen(alter) > 0) && (alter[strlen(alter) - 1] == '\n'))
+        							alter[strlen (alter) - 1] = '\0';
+	                			strcpy(temp->nome, alter);
 	                			printf("\nNome alterado com sucesso!");
         						break;
         					case '2':
@@ -226,7 +217,7 @@ int main()
 								break;
 							case '5':
 								printf("\nDigite a nova ocupacao: ");
-								fgets(alter4, MAX, stdin);
+								fgets(alter4, MAX4, stdin);
 								if ((strlen(alter4) > 0) && (alter4[strlen(alter4) - 1] == '\n'))
         							alter4[strlen(alter4) - 1] = '\0';
 								strcpy(temp->ocupacao, alter4);
@@ -247,7 +238,7 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome que deseja deletar: ");
-	                fgets(nome, MAX, stdin);
+	                fgets(nome, MAX1, stdin);
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
         				nome[strlen (nome) - 1] = '\0';
 
@@ -280,7 +271,7 @@ int main()
 	}
 }
 
-USER* novoNo(USER* No, USER* arvora)   // Cria um novo nó caso a entrada seja nulla. Caso a entrada seja outro nó, apenas gera um novo e copia as informações para ele.
+USER* novoNo(USER* No)   // Cria um novo nó caso a entrada seja nulla. Caso a entrada seja outro nó, apenas gera um novo e copia as informações para ele.
 {
 	USER* novoUser = (USER*)malloc(sizeof(USER));
 	novoUser->esquerda = NULL;
@@ -295,27 +286,18 @@ USER* novoNo(USER* No, USER* arvora)   // Cria um novo nó caso a entrada seja n
 	} 
 
 	char infoUser[2][50];
-	int s;	
-	for(s = 0; s <= 2; s++){ // Loop para quebrar o fluxo do primeiro fgets() e fazer o segundo funcionar independentemente.
+	int s;
+	for(s = 0; s <= 2; s++){
 		if(s = 1){
 			printf("\nInsira o nome que deseja adicionar: ");
-			fgets(infoUser[0], MAX, stdin);
+			fgets(infoUser[0], MAX1, stdin);
 			if ((strlen(infoUser[0]) > 0) && (infoUser[0][strlen(infoUser[0]) - 1] == '\n'))
-   		 	    infoUser[0][strlen (infoUser[0]) - 1] = '\0'; // Tira o \n no final da string que entrou por conta do fgets().
-
- 			if(buscarNo(arvora, infoUser[0]) == NULL) // Checa se o nome já existe.	
- 				strcpy(novoUser->nome, infoUser[0]);
- 			else
- 			{
- 				s--; //Se não existe reseta o 's' e roda o nome para adicionar denovo.
- 				printf("\nNome ja existente, %s tente novamente!", infoUser[0]); 
- 				continue;
- 			}
- 			
+   		 	    infoUser[0][strlen (infoUser[0]) - 1] = '\0'; // tirar o \n no final da string que entrou por conta do fgets()
+ 			strcpy(novoUser->nome, infoUser[0]);
 		}
 		if(s = 2){
-			printf("\nDigite sua ocupacao em no maximo 50 caracteres: ");
-			fgets(infoUser[1], MAX, stdin);
+			printf("\nDigite sua ocupacao em no maximo 100 caracteres: ");
+			fgets(infoUser[1], MAX4, stdin);
 			if ((strlen(infoUser[1]) > 0) && (infoUser[1][strlen(infoUser[1]) - 1] == '\n'))
    	    		infoUser[1][strlen(infoUser[1]) - 1] = '\0';
 			strcpy(novoUser->ocupacao, infoUser[1]);
