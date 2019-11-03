@@ -3,7 +3,9 @@
 #include <conio.h>   // Para funções que movem o cursor de escrita, e gerenciam entrada e saída de caracteres.
 #include <windows.h> // Para funções relacionadas ao OS Windows. Neste caso, só está sendo usada para dar "cls" e limpar a tela do console.
 #include <string.h>  // Para operações de Strings, muito importante.
-#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define max(a,b) (((a) > (b)) ? (a) : (b))	// Achar maior valor rapidamente.
+#define MAX_NOME 50  						// Tamanho máximo do fluxo de caracteres para o campo nome.
+#define MAX_OCUP 100 						// Tamanho máximo do fluxo de caracteres para o campo ocupação.
 
 // Struct que guarda uma data. Será usado para aniversário.
 typedef struct Data{
@@ -43,9 +45,6 @@ USER* rotDireita(USER*);
 USER* rotEsquerda(USER*);
 int fatorNo(USER*);
 
-#define MAX1 50
-#define MAX4 100 
-
 int main()
 {
 	FILE* fp;  				// Ponteiros de arquivo
@@ -53,7 +52,7 @@ int main()
 	USER* temp;  			// Auxiliar para alteçao
 	USER u;  				// Auxiliar para des-serializar arvore
 	char another, choice;	// Auxiliares de escolha na GUI
-	char nome[50], alter[50], alter2[15], alter3[30], alter4[100];   // Auxiliares de busca e alteração
+	char nome[50], alter_nome[50], alter_cpf[15], alter_email[30], alter_ocupacao[100];   // Auxiliares de busca e alteração
 
   	// Criação ou reload de árvore.
 	fp = fopen("USER.DAT", "rb+");
@@ -142,7 +141,7 @@ int main()
 				while(another == 's')
 				{
 					printf("\nInsira o nome do usuario que deseja buscar: ");
-					fgets(nome, MAX1, stdin);	
+					fgets(nome, MAX_NOME, stdin);	
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
   				    	nome[strlen (nome) - 1] = '\0';
 					temp = buscarNo(arvore, nome);
@@ -168,7 +167,7 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome do usuario que deseja alterar: ");
-	                fgets(nome, MAX1, stdin);
+	                fgets(nome, MAX_NOME, stdin);
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
         				nome[strlen (nome) - 1] = '\0';
 	                temp = buscarNo(arvore, nome);
@@ -196,10 +195,10 @@ int main()
         				{
         					case '1':
         						printf("\nDigite o novo nome: ");
-	                			fgets(alter, MAX1, stdin);
-								if ((strlen(alter) > 0) && (alter[strlen(alter) - 1] == '\n'))
-        							alter[strlen (alter) - 1] = '\0';
-	                			strcpy(temp->nome, alter);
+	                			fgets(alter_nome, MAX_NOME, stdin);
+								if ((strlen(alter_nome) > 0) && (alter_nome[strlen(alter_nome) - 1] == '\n'))
+        							alter_nome[strlen (alter_nome) - 1] = '\0';
+	                			strcpy(temp->nome, alter_nome);
 	                			printf("\nNome alterado com sucesso!");
         						break;
         					case '2':
@@ -211,22 +210,22 @@ int main()
 								break;
 							case '3':
 								printf("\nDigite o novo CPF: ");
-								scanf("%s", alter2);
-                            	strcpy(temp->cpf, alter2);
+								scanf("%s", alter_cpf);
+                            	strcpy(temp->cpf, alter_cpf);
                             	printf("\nCPF alterado com sucesso!");
 								break;
 							case '4':
 								printf("\nDigite o novo email: ");
-								scanf("%s", alter3);
-                            	strcpy(temp->email, alter3);
+								scanf("%s", alter_email);
+                            	strcpy(temp->email, alter_email);
                             	printf("\nEmail alterado com sucesso!");
 								break;
 							case '5':
 								printf("\nDigite a nova ocupacao: ");
-								fgets(alter4, MAX4, stdin);
-								if ((strlen(alter4) > 0) && (alter4[strlen(alter4) - 1] == '\n'))
-        							alter4[strlen(alter4) - 1] = '\0';
-								strcpy(temp->ocupacao, alter4);
+								fgets(alter_ocupacao, MAX_OCUP, stdin);
+								if ((strlen(alter_ocupacao) > 0) && (alter_ocupacao[strlen(alter_ocupacao) - 1] == '\n'))
+        							alter_ocupacao[strlen(alter_ocupacao) - 1] = '\0';
+								strcpy(temp->ocupacao, alter_ocupacao);
 								printf("\nOcupacao alterada com sucesso!");
 								break;
         				}
@@ -244,7 +243,7 @@ int main()
 	            while(another == 's')
 	            {
 	               	printf("\nInsira o nome que deseja deletar: ");
-	                fgets(nome, MAX1, stdin);
+	                fgets(nome, MAX_NOME, stdin);
 					if ((strlen(nome) > 0) && (nome[strlen(nome) - 1] == '\n'))
         				nome[strlen (nome) - 1] = '\0';
 
@@ -299,14 +298,14 @@ USER* novoNo(USER* No)   // Cria um novo nó caso a entrada seja nulla. Caso a e
 	for(s = 0; s <= 2; s++){
 		if(s = 1){
 			printf("\nInsira o nome que deseja adicionar: ");
-			fgets(infoUser[0], MAX1, stdin);
+			fgets(infoUser[0], MAX_NOME, stdin);
 			if ((strlen(infoUser[0]) > 0) && (infoUser[0][strlen(infoUser[0]) - 1] == '\n'))
    		 	    infoUser[0][strlen (infoUser[0]) - 1] = '\0'; // tirar o \n no final da string que entrou por conta do fgets()
  			strcpy(novoUser->nome, infoUser[0]);
 		}
 		if(s = 2){
 			printf("\nDigite sua ocupacao em no maximo 100 caracteres: ");
-			fgets(infoUser[1], MAX4, stdin);
+			fgets(infoUser[1], MAX_OCUP, stdin);
 			if ((strlen(infoUser[1]) > 0) && (infoUser[1][strlen(infoUser[1]) - 1] == '\n'))
    	    		infoUser[1][strlen(infoUser[1]) - 1] = '\0';
 			strcpy(novoUser->ocupacao, infoUser[1]);
@@ -337,12 +336,15 @@ USER* inserirNo(USER* raiz, USER* novoUser)  // Insere um nó na arvore, compara
 	// Caso 1: Nova raiz da sub-árvore.
 	if (raiz == NULL)
 		return novoUser;
-    // Caso 2: Chave MENOR que a da raiz.
+    
+	// Caso 2: Chave MENOR que a da raiz.
 	if (strcmp(novoUser->nome, raiz->nome) < 0)
         raiz->esquerda = inserirNo(raiz->esquerda, novoUser);
-    // Caso 3: Chave MAIOR que a da raiz.
+    
+	// Caso 3: Chave MAIOR que a da raiz.
 	else if (strcmp(novoUser->nome, raiz->nome) > 0)
         raiz->direita = inserirNo(raiz->direita, novoUser);
+	
 	// Caso 4: Chaves iguais, não permitido em BSTs.
 	else
 	{
