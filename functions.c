@@ -16,7 +16,7 @@ typedef struct Data{
 
 // Struct que guarda informações de um usuário.
 typedef struct USER{
-	char nome[50], cpf[15], email[30], ocupacao[100];
+	char nome[50], ocupacao[100], senha[50], cpf[15], email[30];
 	DATA niver;
 	struct USER* esquerda;
 	struct USER* direita;
@@ -71,6 +71,35 @@ USER* novoNo(USER* No, char* nome)
 	novoUser->altura = 1;
 
 	strcpy(novoUser->nome, nome);
+    
+	char senha[20],c=' ';
+	int i=0;
+	printf("\nEscreva sua senha com no maximo 20 caracteres: ");
+	while (i <= 20){
+	    c=getch();
+	    if(c == 13 || c== 9)
+	    {
+	    	senha[i] = '\0';
+	    	break;
+	    }
+	    else if(c == 8)
+	    {
+	    	if(i > 1)
+	    	{
+	    		i--;
+	    		printf("\b \b");
+	    	}
+	    }else
+	    {
+			senha[i++] = c;
+	    	printf("* \b");
+	    } 
+	}
+	if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
+		senha[strlen(senha) - 1] = '\0';
+	strcpy(novoUser->senha, senha);
+	printf("\n");
+
 
 	char ocupacao[100];
 	printf("\nDigite sua ocupacao em no maximo 100 caracteres: ");

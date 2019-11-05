@@ -87,9 +87,9 @@ int main()
 	        case '2':  // Exibe o nome de todos os USERS da árvore In-Ordem (Ordem Alfabética)
 	            system("cls");
 
-				printf("\n================");
+				printf("\n====================");
 			    exibirIn(arvore);
-				printf("\n================");
+				printf("\n====================");
 
 	            getch();
 	            break;
@@ -107,10 +107,11 @@ int main()
 					if (temp != NULL)
 					{
 						printf("\nNome: %s", temp->nome);
+                      	printf("\nOcupacao: %s", temp->ocupacao);
 						printf("\nData de Nascimento: %d/%d/%d", temp->niver.dia, temp->niver.mes, temp->niver.ano);
                       	printf("\nCPF: %s", temp->cpf);
                       	printf("\nEmail: %s", temp->email);
-                      	printf("\nOcupacao: %s", temp->ocupacao);
+                      	printf("\nSenha: %s", temp->senha);
 					}
 					else
 						printf("\n<< ERRO: Usuario nao encontrado. >>");
@@ -133,19 +134,21 @@ int main()
 	                if (temp != NULL)  // Encontrou
 	                {
 		                system("cls");
-				        gotoxy(30,10);
+				        gotoxy(30,8);
 				        printf("Usuario %s encontrado. O que deseja alterar?", var_nome); 
-				        gotoxy(30,12);
+				        gotoxy(30,10);
 				        printf("1. Nome");
+				        gotoxy(30,12);
+				        printf("2. Senha");
 				        gotoxy(30,14);
-				        printf("2. Data de Aniversario");
-				        gotoxy(30,16);
-						printf("3. CPF");
+						printf("3. Ocupacao");
+						gotoxy(30,16);
+						printf("4. Data de Aniversario");
 						gotoxy(30,18);
-						printf("4. Email");
+						printf("5. CPF");
 						gotoxy(30,20);
-						printf("5. Ocupacao");
-						gotoxy(30,22);
+				        printf("6. Email");
+				        gotoxy(30,22);
 				        printf("Escolha: ");
 
 				        fflush(stdin);
@@ -166,31 +169,61 @@ int main()
 								}
         						break;
         					case '2':
-        						printf("\nDigite a nova data de nascimento no formato DD MM AAAA: ");
-								scanf("%d", &temp->niver.dia);
-								scanf("%d", &temp->niver.mes);
-								scanf("%d", &temp->niver.ano);
-								printf("\nData de nascimento alterado com sucesso!");
+        						printf("\nDigite a nova senha: ");
+        						char senha[20],c=' ';
+								int i=0;
+								printf("\nEscreva sua senha com no maximo 20 caracteres: ");
+								while (i <= 20){
+								    c=getch();
+								    if(c == 13 || c== 9)
+								    {
+								    	senha[i] = '\0';
+								    	break;
+								    }
+								    else if(c == 8)
+								    {
+								    	if(i > 1)
+								    	{
+								    		i--;
+								    		printf("\b \b");
+								    	}
+								    }else
+								    {
+										senha[i++] = c;
+								    	printf("* \b");
+								    } 
+								}
+								if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
+									senha[strlen(senha) - 1] = '\0';
+								strcpy(temp->senha, senha);
+								printf("\nSenha alterada com sucesso!");
 								break;
-							case '3':
-								printf("\nDigite o novo CPF: ");
-								scanf("%s", alter_cpf);
-                            	strcpy(temp->cpf, alter_cpf);
-                            	printf("\nCPF alterado com sucesso!");
-								break;
-							case '4':
-								printf("\nDigite o novo email: ");
-								scanf("%s", alter_email);
-                            	strcpy(temp->email, alter_email);
-                            	printf("\nEmail alterado com sucesso!");
-								break;
-							case '5':
+        					case '3':
 								printf("\nDigite a nova ocupacao: ");
 								fgets(alter_ocupacao, MAX_OCUP, stdin);
 								if ((strlen(alter_ocupacao) > 0) && (alter_ocupacao[strlen(alter_ocupacao) - 1] == '\n'))
         							alter_ocupacao[strlen(alter_ocupacao) - 1] = '\0';
 								strcpy(temp->ocupacao, alter_ocupacao);
 								printf("\nOcupacao alterada com sucesso!");
+								break;
+							case '4':
+        						printf("\nDigite a nova data de nascimento no formato DD MM AAAA: ");
+								scanf("%d", &temp->niver.dia);
+								scanf("%d", &temp->niver.mes);
+								scanf("%d", &temp->niver.ano);
+								printf("\nData de nascimento alterado com sucesso!");								
+								break;
+							case '5':
+								printf("\nDigite o novo CPF: ");
+								scanf("%s", alter_cpf);
+                            	strcpy(temp->cpf, alter_cpf);
+                            	printf("\nCPF alterado com sucesso!");
+								break;
+							case '6':
+								printf("\nDigite o novo email: ");
+								scanf("%s", alter_email);
+                            	strcpy(temp->email, alter_email);
+                            	printf("\nEmail alterado com sucesso!");
 								break;
         				}
 	                }
