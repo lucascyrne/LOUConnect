@@ -31,6 +31,10 @@ USER* inserirNo(USER*, USER*);
 USER* buscarNo(USER*, char*);
 USER* deletarNo(USER*, char*);
 
+char* criarSenha(USER*);
+char* encrypt(char*);
+char* decrypt(char*);
+
 int alturaNo(USER*);
 int fatorNo(USER*);
 USER* rotDireita(USER*);
@@ -72,34 +76,8 @@ USER* novoNo(USER* No, char* nome)
 
 	strcpy(novoUser->nome, nome);
     
-	char senha[20],c=' ';
-	int i=0;
-	printf("\nEscreva sua senha com no maximo 20 caracteres: ");
-	while (i <= 20){
-	    c=getch();
-	    if(c == 13 || c== 9)
-	    {
-	    	senha[i] = '\0';
-	    	break;
-	    }
-	    else if(c == 8)
-	    {
-	    	if(i > 1)
-	    	{
-	    		i--;
-	    		printf("\b \b");
-	    	}
-	    }else
-	    {
-			senha[i++] = c;
-	    	printf("* \b");
-	    } 
-	}
-	if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
-		senha[strlen(senha) - 1] = '\0';
-	strcpy(novoUser->senha, senha);
+	criarSenha(novoUser);//Cria, encripta e salva a senha ja no novo usuario;
 	printf("\n");
-
 
 	char ocupacao[100];
 	printf("\nDigite sua ocupacao em no maximo 100 caracteres: ");
@@ -379,4 +357,71 @@ USER* rotEsquerda(USER* x)
 
 	// Retorna a nova raiz
 	return y;
+}
+
+char* criarSenha(USER* novaSenha)
+{
+	char senha[20], senhaConf[20], c = ' ';
+	int i, d;
+	i = 0;
+	d = 0;
+
+	printf("\nEscreva sua senha com no maximo 20 caracteres: ");
+	while (i <= 20)
+	{
+	    c=getch();
+	    if(c == 13 || c== 9)
+	    {
+	    	senha[i] = '\0';
+	    	break;
+	    }
+	    else if(c == 8)
+	    {
+	    	if(i > 0)
+	    	{
+	    		i--;
+	    		printf("\b \b");
+	    	}
+	    }else
+	    {
+			senha[i++] = c;
+	    	printf("* \b");
+	    } 
+	}
+
+	printf("\nConfirme sua senha: ");
+	while (d <= 20)
+	{
+	    c=getch();
+	    if(c == 13 || c== 9)
+	    {
+	    	senhaConf[d] = '\0';
+	    	break;
+	    }
+	    else if(c == 8)
+	    {
+	    	if(d > 0)
+	    	{
+	    		d--;
+	    		printf("\b \b");
+	    	}
+	    }else
+	    {
+			senhaConf[d++] = c;
+	    	printf("* \b");
+	    } 
+	}
+	printf("\n%s\n%s", senha, senhaConf);
+	if (strcmp(senha, senhaConf) == 0) 
+	{
+		if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
+		senha[strlen(senha) - 1] = '\0';
+		strcpy(novaSenha->senha, senha);
+	}
+	else
+	{
+		printf("\nAs senhas nao coincidem, tente novamente!");
+		return criarSenha(novaSenha);
+	}
+		
 }

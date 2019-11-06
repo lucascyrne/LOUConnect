@@ -169,33 +169,7 @@ int main()
 								}
         						break;
         					case '2':
-        						printf("\nDigite a nova senha: ");
-        						char senha[20],c=' ';
-								int i=0;
-								printf("\nEscreva sua senha com no maximo 20 caracteres: ");
-								while (i <= 20){
-								    c=getch();
-								    if(c == 13 || c== 9)
-								    {
-								    	senha[i] = '\0';
-								    	break;
-								    }
-								    else if(c == 8)
-								    {
-								    	if(i > 1)
-								    	{
-								    		i--;
-								    		printf("\b \b");
-								    	}
-								    }else
-								    {
-										senha[i++] = c;
-								    	printf("* \b");
-								    } 
-								}
-								if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
-									senha[strlen(senha) - 1] = '\0';
-								strcpy(temp->senha, senha);
+        						criarSenha(temp);
 								printf("\nSenha alterada com sucesso!");
 								break;
         					case '3':
