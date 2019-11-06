@@ -31,9 +31,9 @@ USER* inserirNo(USER*, USER*);
 USER* buscarNo(USER*, char*);
 USER* deletarNo(USER*, char*);
 
-char* criarSenha(USER*);
-char* encrypt(char*);
-char* decrypt(char*);
+void criarSenha(USER*);
+void encrypt(char*, USER*);
+void decrypt(char*, USER*);
 
 int alturaNo(USER*);
 int fatorNo(USER*);
@@ -359,7 +359,7 @@ USER* rotEsquerda(USER* x)
 	return y;
 }
 
-char* criarSenha(USER* novaSenha)
+void criarSenha(USER* nova_senha)
 {
 	char senha[20], senhaConf[20], c = ' ';
 	int i, d;
@@ -415,13 +415,22 @@ char* criarSenha(USER* novaSenha)
 	if (strcmp(senha, senhaConf) == 0) 
 	{
 		if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
-		senha[strlen(senha) - 1] = '\0';
-		strcpy(novaSenha->senha, senha);
+			senha[strlen(senha) - 1] = '\0';
+		encrypt(senha, nova_senha);
 	}
 	else
 	{
 		printf("\nAs senhas nao coincidem, tente novamente!");
-		return criarSenha(novaSenha);
-	}
-		
+		return criarSenha(nova_senha);
+	}		
+}
+
+void encrypt(char* senhaBase, USER* Novasenha)
+{
+	int tam, t;
+	tam = strlen(senhaBase);
+	
+	for(t = 0; t < tam; t++) 
+		senhaBase[t] = senhaBase[t] + tam;
+	strcpy(Novasenha->senha, senhaBase);
 }
