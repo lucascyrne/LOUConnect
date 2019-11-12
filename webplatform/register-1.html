@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>LOUConnect</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="assets/css/Search-Input-responsive.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <section class="d-flex float-left flex-column justify-content-between my-auto" id="blue-section">
+        <nav class="navbar navbar-light navbar-expand-md text-left float-left" id="nav">
+            <div class="container-fluid"><a class="navbar-brand roboto" href="#"><strong>LOUC</strong>o</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                <div
+                    class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="nav navbar-nav">
+                        <li class="nav-item" role="presentation"><a class="nav-link roboto" href="#">First Item</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link roboto" href="#">Second Item</a></li>
+                        <li class="nav-item" role="presentation"></li>
+                    </ul>
+            </div>
+            </div>
+        </nav>
+    </section>
+    <section class="d-flex float-right flex-column my-auto" id="white-section" style="margin:  0 auto;">
+        <div class="container text-left d-flex flex-column justify-content-between my-auto" id="signup-container" style="font-size: 18px;font-family: Roboto;margin-top: 100px!important;">
+            <h1 class="text-left d-lg-flex justify-content-lg-center" id="signup-title" style="font-size: 38px;"><strong>Bem-vindo ao LOUCo.</strong></h1>
+            <div id="signup-top">
+                <div class="form-group m-2">
+                    <p class="m-2">Nome Completo</p>
+                    <form><input class="form-control form-control-sm m-2" type="text" id="name" required=""></form>
+                </div>
+                <div class="form-group m-2">
+                    <p class="m-2">CPF</p>
+                    <form><input class="form-control form-control-sm m-2" type="text" id="cpf" data-mask="000.000.000-00" placeholder="000.000.000-00" required=""></form>
+                </div>
+                <div class="form-group m-2">
+                    <p class="m-2">Email</p>
+                    <form><input class="form-control form-control-sm m-2" type="email" id="email" placeholder="email@domain.com" required=""></form>
+                </div>
+            </div>
+            <div id="signup-bot">
+                <div class="form-group m-2" id="date-area">
+                    <p class="m-2">Data de Nascimento</p>
+                    <form><input class="form-control form-control-sm m-2" id="cpf" data-mask="00/00/00" placeholder="dd/mm/aaaa" required=""></form>
+                </div>
+                <div class="form-group m-2" id="gender-area">
+                    <p class="m-2">Gênero</p>
+                    <form><select class="form-control form-control-sm m-2" id="gender" type="date" required=""><option value="11">Escolha...</option><option value="12">Masculino</option><option value="13">Feminino</option><option value="14">Não-Binário</option><option value="">Prefiro não dizer</option></select></form>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex d-xl-flex flex-column mx-auto justify-content-xl-center" id="row-next" style="width: 956.188px;">
+            <div style="width: auto;margin-right: 40px;margin-top: 20px;"><a class="btn btn-primary shadow-sm float-right site-btn" role="button" id="back-btn" style="color: rgb(232,232,232);" href="#">RETORNAR</a><a class="btn btn-info shadow-sm float-right site-btn" role="button" id="next-btn" style="color: rgb(232,232,232);margin-left: 0px;margin-bottom: 0px;margin-right: 20px;"
+                    href="#">PRÓXIMO</a></div>
+            <div class="d-xl-flex justify-content-xl-center"><input type="radio" class="m-1"><input type="radio" class="m-1" disabled=""><input type="radio" class="m-1" disabled="" checked=""><input type="radio" class="m-1" disabled=""></div>
+        </div>
+    </section>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+    <script src="assets/js/mask_init.js"></script>
+</body>
+
+</html>
