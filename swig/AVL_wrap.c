@@ -2634,11 +2634,10 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_Data swig_types[0]
-#define SWIGTYPE_p_FILE swig_types[1]
-#define SWIGTYPE_p_USER swig_types[2]
-#define SWIGTYPE_p_char swig_types[3]
-static swig_type_info *swig_types[5];
-static swig_module_info swig_module = {swig_types, 4, 0, 0, 0, 0};
+#define SWIGTYPE_p_USER swig_types[1]
+#define SWIGTYPE_p_char swig_types[2]
+static swig_type_info *swig_types[4];
+static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4001,28 +4000,43 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_escreveNo(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  USER *arg1 = (USER *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject *swig_obj[1] ;
+  
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_USER, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "escreveNo" "', argument " "1"" of type '" "USER *""'"); 
+  }
+  arg1 = (USER *)(argp1);
+  escreveNo(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_serializar(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   USER *arg1 = (USER *) 0 ;
-  FILE *arg2 = (FILE *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
+  PyObject *swig_obj[1] ;
   
-  if (!SWIG_Python_UnpackTuple(args, "serializar", 2, 2, swig_obj)) SWIG_fail;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_USER, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "serializar" "', argument " "1"" of type '" "USER *""'"); 
   }
   arg1 = (USER *)(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_FILE, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "serializar" "', argument " "2"" of type '" "FILE *""'"); 
-  }
-  arg2 = (FILE *)(argp2);
-  serializar(arg1,arg2);
+  serializar(arg1);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -4033,26 +4047,20 @@ fail:
 SWIGINTERN PyObject *_wrap_desserializar(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   USER *arg1 = (USER *) 0 ;
-  FILE *arg2 = (FILE *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject *swig_obj[2] ;
+  PyObject *swig_obj[1] ;
+  USER *result = 0 ;
   
-  if (!SWIG_Python_UnpackTuple(args, "desserializar", 2, 2, swig_obj)) SWIG_fail;
+  if (!args) SWIG_fail;
+  swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_USER, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "desserializar" "', argument " "1"" of type '" "USER *""'"); 
   }
   arg1 = (USER *)(argp1);
-  res2 = SWIG_ConvertPtr(swig_obj[1], &argp2,SWIGTYPE_p_FILE, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "desserializar" "', argument " "2"" of type '" "FILE *""'"); 
-  }
-  arg2 = (FILE *)(argp2);
-  desserializar(arg1,arg2);
-  resultobj = SWIG_Py_Void();
+  result = (USER *)desserializar(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_USER, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -4166,8 +4174,9 @@ static PyMethodDef SwigMethods[] = {
 	 { "fatorNo", _wrap_fatorNo, METH_O, NULL},
 	 { "rotDireita", _wrap_rotDireita, METH_O, NULL},
 	 { "rotEsquerda", _wrap_rotEsquerda, METH_O, NULL},
-	 { "serializar", _wrap_serializar, METH_VARARGS, NULL},
-	 { "desserializar", _wrap_desserializar, METH_VARARGS, NULL},
+	 { "escreveNo", _wrap_escreveNo, METH_O, NULL},
+	 { "serializar", _wrap_serializar, METH_O, NULL},
+	 { "desserializar", _wrap_desserializar, METH_O, NULL},
 	 { "exibirPre", _wrap_exibirPre, METH_O, NULL},
 	 { "exibirIn", _wrap_exibirIn, METH_O, NULL},
 	 { "exibirPos", _wrap_exibirPos, METH_O, NULL},
@@ -4182,25 +4191,21 @@ static PyMethodDef SwigMethods_proxydocs[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p_Data = {"_p_Data", "struct Data *|Data *|DATA *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_FILE = {"_p_FILE", "FILE *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_USER = {"_p_USER", "struct USER *|USER *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Data,
-  &_swigt__p_FILE,
   &_swigt__p_USER,
   &_swigt__p_char,
 };
 
 static swig_cast_info _swigc__p_Data[] = {  {&_swigt__p_Data, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_FILE[] = {  {&_swigt__p_FILE, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_USER[] = {  {&_swigt__p_USER, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Data,
-  _swigc__p_FILE,
   _swigc__p_USER,
   _swigc__p_char,
 };

@@ -122,11 +122,14 @@ def rotDireita(y):
 def rotEsquerda(x):
     return _AVL.rotEsquerda(x)
 
-def serializar(No, fp):
-    return _AVL.serializar(No, fp)
+def escreveNo(No):
+    return _AVL.escreveNo(No)
 
-def desserializar(arvore, fp):
-    return _AVL.desserializar(arvore, fp)
+def serializar(No):
+    return _AVL.serializar(No)
+
+def desserializar(arvore):
+    return _AVL.desserializar(arvore)
 
 def exibirPre(arvore):
     return _AVL.exibirPre(arvore)

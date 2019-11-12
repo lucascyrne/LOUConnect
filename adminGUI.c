@@ -15,43 +15,30 @@ void gotoxy(int x,int y)
 
 int main()
 {
-	FILE* fp;  				// Ponteiros de arquivo
-	USER* arvore = NULL;  	// Criação da Árvore
+	USER* arvore = NULL;            // Criação da Árvore
+	USER* temp;                     // Auxiliar para armazenar um user temporariamente.
 
-	USER* temp;  					// Auxiliar para armazenar um user temporariamente.
-	int var_dia, var_mes, var_ano;	// Auxiliar para armazenar aniversario temporariamente.
-	char another, choice;			// Auxiliares de escolha na GUI.
-	char var_nome[50], var_cpf[15], var_email[30], var_ocup[100];   // Auxiliares de busca e alteração
+    char var_nome[50], var_cpf[15], var_email[30], var_ocup[100];   // Auxiliares de busca e alteração
+    char another, choice;			// Auxiliares de escolha na GUI.
 
-  	// Criação ou reload de árvore.
-	fp = fopen("USER.DAT", "rb+");
-  	if (fp == NULL) // Criar arquivo
-    {
-		fp = fopen("USER.DAT", "wb+");  // Cria arquivo vazio
-		if (fp == NULL)  // Se ainda não existe arquivo...
-        {
-          printf("Impossivel abrir/criar arquivo.");
-          exit(1);  // Deu erro, sai do programa.
-        }
-    }
-	else
-    {
-		system("cls");  // Limpa a janela do console.
-		gotoxy(28,10);
-		printf("CARREGANDO REGISTROS...");
+    int var_dia, var_mes, var_ano;  // Auxiliar para armazenar aniversario temporariamente.
 
-		desserializar(arvore, fp);
+    // Criação ou reload de árvore.
+	system("cls");  // Limpa a janela do console.
+	gotoxy(28,10);
+	printf("CARREGANDO REGISTROS...");
 
-        gotoxy(28,12);
-		printf("REGISTROS CARREGADOS COM SUCESSO!", count);
-		gotoxy(28,14);
-		printf("Aperte qualquer tecla para iniciar o LOUConnect!");
+	arvore = desserializar(arvore);
 
-		fflush(stdin);
-		getch();  // Continua o programa
-    }
+    gotoxy(28,12);
+	printf("REGISTROS CARREGADOS COM SUCESSO!", count);
+	gotoxy(28,14);
+	printf("Aperte qualquer tecla para iniciar o LOUConnect!");
 
-  while(1)
+	fflush(stdin);
+	getch();  // Continua o programa
+
+    while(1)
     {
         system("cls");  // Limpa a janela do console.
         gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
@@ -251,14 +238,11 @@ int main()
 	            }
 	            break;
 	        case '6':  // Encerra o programa, e inicia a serialização de dados para garantir persistência.
-				fp = freopen("USER.DAT", "wb+", fp);
-
 				system("cls");  // Limpa a janela do console.
 				gotoxy(28,10);
 				printf("SALVANDO REGISTROS...");
 
-                serializar(arvore, fp);  // Serializa a árvore.
-				fclose(fp);
+                serializar(arvore);  // Serializa a árvore.
 
 				gotoxy(28,12);
 				printf("REGISTROS SALVOS COM SUCESSO!");

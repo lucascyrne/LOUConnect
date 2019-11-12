@@ -7,6 +7,8 @@
 #define MAX_NOME 50   // Tamanho maximo do stream para nome
 #define MAX_OCUP 100  // Tamanho maximo do stream para ocupação
 
+FILE* fp;	// Ponteiro global para o arquivo que armazenará os registros.
+
 // Aloca uma nova posicao de memoria para um no, e copia as informacoes dele para o novo.
 USER* recriarNo(USER* No)
 {
@@ -243,24 +245,47 @@ void exibirPos(USER* arvore)
 	}
 }
 
-
-// Executa a serialização da árvore (Escrita dela num arquivo, para garantir a persistência dos dados)
-void serializar(USER* No, FILE* fp)
+// Varre a arvore e executa a serializacao .
+void escreveNo(USER* No)
 {
 	if (No != NULL)
 	{
 		fwrite(No, sizeof(USER), 1, fp);
-		serializar(No->esquerda, fp);
-		serializar(No->direita, fp);
+		escreveNo(No->esquerda);
+		escreveNo(No->direita);
 	}
 }
 
-// Recarrega uma arvore a partir da dessearializacao
-void desserializar(USER* arvore, FILE* fp)
+// Executa a serialização da árvore (Escrita dela num arquivo, para garantir a persistência dos dados)
+void serializar(USER* No)
 {
-	USER No;
-	while(fread(&No, sizeof(No), 1, fp)==1)  // Des-serialização a partir do arquivo.
-		arvore = inserirNo(arvore, recriarNo(&No));
+	fp = fopen("USER.DAT", "wb+");
+	escreveNo(No);
+	fclose(fp);
+}
+
+// Abre o arquivo de registros e recarrega a arvore. Cria o arquivo caso nao exista.
+USER* desserializar(USER* arvore)
+{
+	fp = fopen("USER.DAT", "rb+");
+
+	// Nao existe --> Cria arquivo vazio
+	if (fp == NULL)
+	{
+		fclose(fp);
+		fp = fopen("USER.DAT", "wb+");
+	}
+	// Des-serialização a partir do arquivo.
+	else
+	{
+		USER No;
+		while(fread(&No, sizeof(No), 1, fp)==1)
+			arvore = inserirNo(arvore, recriarNo(&No));
+	}
+	rewind(fp);
+	fclose(fp);
+
+	return arvore;
 }
 
 

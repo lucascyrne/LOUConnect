@@ -25,8 +25,9 @@ int fatorNo(USER* No);
 USER* rotDireita(USER* y);
 USER* rotEsquerda(USER* x);
 
-void serializar(USER* No, FILE* fp);
-void desserializar(USER* arvore, FILE* fp);
+void escreveNo(USER* No);
+void serializar(USER* No);
+USER* desserializar(USER* arvore);
 
 void exibirPre(USER* arvore);
 void exibirIn(USER* arvore);
