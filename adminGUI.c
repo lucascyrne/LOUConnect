@@ -1,13 +1,27 @@
-#include "functions.c"	 // Contém todas as funções e definições necessárias para gerenciar os registros armazenados.
+#include <conio.h>   		// Para funções que movem o cursor de escrita, e gerenciam entrada e saída de caracteres.
+#include <windows.h> 		// Para funções relacionadas ao OS Windows. Neste caso, só está sendo usada para dar "cls" e limpar a tela do console.
+#include "swig/src/AVL.c"	// Contém todas as funções e definições necessárias para gerenciar os registros armazenados.
+
+
+// <conio.h> :: Variável e função conseguem mover o cursor de escrita e leitura no console (CMD), com coordenadas X e Y.
+COORD coord = {0,0};
+void gotoxy(int x,int y)
+{
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
+}
+
 
 int main()
 {
 	FILE* fp;  				// Ponteiros de arquivo
 	USER* arvore = NULL;  	// Criação da Árvore
-	USER* temp;  			// Auxiliar para alteçao
-	USER u;  				// Auxiliar para des-serializar arvore
-	char another, choice;	// Auxiliares de escolha na GUI
-	char var_nome[50], alter_cpf[15], alter_email[30], alter_ocupacao[100];   // Auxiliares de busca e alteração
+
+	USER* temp;  					// Auxiliar para armazenar um user temporariamente.
+	int var_dia, var_mes, var_ano;	// Auxiliar para armazenar aniversario temporariamente.
+	char another, choice;			// Auxiliares de escolha na GUI.
+	char var_nome[50], var_cpf[15], var_email[30], var_ocup[100];   // Auxiliares de busca e alteração
 
   	// Criação ou reload de árvore.
 	fp = fopen("USER.DAT", "rb+");
@@ -26,15 +40,10 @@ int main()
 		gotoxy(28,10);
 		printf("CARREGANDO REGISTROS...");
 
-		int count = 0;
-		while(fread(&u, sizeof(u), 1, fp)==1)  // Des-serialização a partir do arquivo.
-		{		
-			arvore = inserirNo(arvore, novoNo(&u, NULL));
-			count++;
-		}
+		desserializar(arvore, fp);
 
         gotoxy(28,12);
-		printf("%d REGISTROS CARREGADOS COM SUCESSO!", count);
+		printf("REGISTROS CARREGADOS COM SUCESSO!", count);
 		gotoxy(28,14);
 		printf("Aperte qualquer tecla para iniciar o LOUConnect!");
 
@@ -46,7 +55,7 @@ int main()
     {
         system("cls");  // Limpa a janela do console.
         gotoxy(30,10);  // Põe o cursor na posição 30, 10 a partir do canto superior-esquerdo.
-        printf("1. Cadastrar Usuario"); 
+        printf("1. Cadastrar Usuario");
         gotoxy(30,12);
         printf("2. Listar Usuarios");
         gotoxy(30,14);
@@ -77,8 +86,25 @@ int main()
 					if (buscarNo(arvore, var_nome))  // Não é permitido chaves iguais em uma BST
 						printf("\n<< ERRO: NOME JA EXISTE, TENTE UM DIFERENTE >>");
 					else
-						arvore = inserirNo(arvore, novoNo(NULL, var_nome));
+					{
+						printf("\nDigite sua ocupacao em no maximo 100 caracteres: ");
+						fgets(var_ocup, MAX_OCUP, stdin);
+						if ((strlen(var_ocup) > 0) && (var_ocup[strlen(var_ocup) - 1] == '\n'))
+							var_ocup[strlen(var_ocup) - 1] = '\0';
 
+						printf("\nDigite sua data de nascimento no formato DD MM AAAA: ");
+						scanf("%d", &var_dia);
+						scanf("%d", &var_mes);
+						scanf("%d", &var_ano);
+
+						printf("\nDigite seu CPF: ");
+						scanf("%s", var_cpf);
+
+						printf("\nDigite seu email: ");
+						scanf("%s", var_email);
+
+						arvore = inserirNo(arvore, novoNo(var_nome, var_ocup, var_cpf, var_email, var_dia, var_mes, var_ano));
+					}
 	                printf("\n\nAdicionar outro Usuario? (s/n) ");
 	                fflush(stdin);
 	                another = getche();
@@ -99,10 +125,10 @@ int main()
 				while(another == 's')
 				{
 					printf("\nInsira o nome do usuario que deseja buscar: ");
-					fgets(var_nome, MAX_NOME, stdin);	
+					fgets(var_nome, MAX_NOME, stdin);
 					if ((strlen(var_nome) > 0) && (var_nome[strlen(var_nome) - 1] == '\n'))
   				    	var_nome[strlen (var_nome) - 1] = '\0';
-					
+
 					temp = buscarNo(arvore, var_nome);
 					if (temp != NULL)
 					{
@@ -134,7 +160,7 @@ int main()
 	                {
 		                system("cls");
 				        gotoxy(30,10);
-				        printf("Usuario %s encontrado. O que deseja alterar?", var_nome); 
+				        printf("Usuario %s encontrado. O que deseja alterar?", var_nome);
 				        gotoxy(30,12);
 				        printf("1. Nome");
 				        gotoxy(30,14);
@@ -174,22 +200,22 @@ int main()
 								break;
 							case '3':
 								printf("\nDigite o novo CPF: ");
-								scanf("%s", alter_cpf);
-                            	strcpy(temp->cpf, alter_cpf);
+								scanf("%s", var_cpf);
+                            	strcpy(temp->cpf, var_cpf);
                             	printf("\nCPF alterado com sucesso!");
 								break;
 							case '4':
 								printf("\nDigite o novo email: ");
-								scanf("%s", alter_email);
-                            	strcpy(temp->email, alter_email);
+								scanf("%s", var_email);
+                            	strcpy(temp->email, var_email);
                             	printf("\nEmail alterado com sucesso!");
 								break;
 							case '5':
 								printf("\nDigite a nova ocupacao: ");
-								fgets(alter_ocupacao, MAX_OCUP, stdin);
-								if ((strlen(alter_ocupacao) > 0) && (alter_ocupacao[strlen(alter_ocupacao) - 1] == '\n'))
-        							alter_ocupacao[strlen(alter_ocupacao) - 1] = '\0';
-								strcpy(temp->ocupacao, alter_ocupacao);
+								fgets(var_ocup, MAX_OCUP, stdin);
+								if ((strlen(var_ocup) > 0) && (var_ocup[strlen(var_ocup) - 1] == '\n'))
+        							var_ocup[strlen(var_ocup) - 1] = '\0';
+								strcpy(temp->ocupacao, var_ocup);
 								printf("\nOcupacao alterada com sucesso!");
 								break;
         				}
