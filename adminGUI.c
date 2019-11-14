@@ -135,8 +135,9 @@ int main()
 	                {
 		                system("cls");
 				        gotoxy(30,8);
-				        printf("Usuario %s encontrado. O que deseja alterar?", var_nome); 
+				        printf("Usuario %s encontrado.", var_nome); 
 				        gotoxy(30,10);
+				        printf("Confirme sua senha para poder alterar: ");
 				        printf("1. Nome");
 				        gotoxy(30,12);
 				        printf("2. Senha");

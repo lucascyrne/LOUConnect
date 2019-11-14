@@ -31,6 +31,7 @@ USER* inserirNo(USER*, USER*);
 USER* buscarNo(USER*, char*);
 USER* deletarNo(USER*, char*);
 
+int checarSenha(char*);
 void criarSenha(USER*);
 void encrypt(char*, USER*);
 void decrypt(char*, USER*);
@@ -362,9 +363,8 @@ USER* rotEsquerda(USER* x)
 void criarSenha(USER* nova_senha)
 {
 	char senha[20], senhaConf[20], c = ' ';
-	int i, d;
+	int i;
 	i = 0;
-	d = 0;
 
 	printf("\nEscreva sua senha com no maximo 20 caracteres: ");
 	while (i <= 20)
@@ -387,8 +387,45 @@ void criarSenha(USER* nova_senha)
 			senha[i++] = c;
 	    	printf("* \b");
 	    } 
-	}
+	} 
 
+	if (checarSenha(senha) == 0) 
+	{
+		if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
+			senha[strlen(senha) - 1] = '\0';
+		encrypt(senha, nova_senha);
+	}
+	else
+	{
+		printf("\nAs senhas nao coincidem, tente novamente!");
+		return criarSenha(nova_senha);
+	}		
+}
+
+void encrypt(char* senhaBase, USER* Novasenha)
+{
+	int tam, t;
+	tam = strlen(senhaBase);
+	
+	for(t = 0; t < tam; t++) 
+		senhaBase[t] = senhaBase[t] + tam;
+	strcpy(Novasenha->senha, senhaBase);
+}
+
+void decrypt(char* senhaBase, USER* novaSenha)
+{
+	int tam, t;
+	tam = strlen(senhaBase);
+	
+	for(t = 0; t < tam; t++) 
+		senhaBase[t] = senhaBase[t] - tam;
+	strcpy(novaSenha->senha, senhaBase);	
+}
+
+int checarSenha(char *senha)
+{
+	char senhaConf[20], c = ' ';
+	int d = 0;
 	printf("\nConfirme sua senha: ");
 	while (d <= 20)
 	{
@@ -411,26 +448,7 @@ void criarSenha(USER* nova_senha)
 	    	printf("* \b");
 	    } 
 	}
-	printf("\n%s\n%s", senha, senhaConf);
-	if (strcmp(senha, senhaConf) == 0) 
-	{
-		if ((strlen(senha) > 0) && (senha[strlen(senha) - 1] == '\n'))
-			senha[strlen(senha) - 1] = '\0';
-		encrypt(senha, nova_senha);
-	}
-	else
-	{
-		printf("\nAs senhas nao coincidem, tente novamente!");
-		return criarSenha(nova_senha);
-	}		
-}
-
-void encrypt(char* senhaBase, USER* Novasenha)
-{
-	int tam, t;
-	tam = strlen(senhaBase);
-	
-	for(t = 0; t < tam; t++) 
-		senhaBase[t] = senhaBase[t] + tam;
-	strcpy(Novasenha->senha, senhaBase);
+	if(strcmp(senha, senhaConf) == 0) 
+		return 0;
+	else return 1;
 }
