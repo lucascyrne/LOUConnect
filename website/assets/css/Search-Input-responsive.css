@@ -1,0 +1,137 @@
+.custom-search-input {
+  border: none;
+  border-bottom: 2px solid #757575;
+  background: transparent;
+  outline: none;
+  padding-bottom: 6px;
+  min-width: 250px;
+  text-indent: 40px;
+}
+
+.search-area {
+  display: inline-block;
+  padding-top: 22px;
+}
+
+.search-icon {
+  font-size: 18px;
+  margin-right: -20px;
+  margin-top: 3px;
+}
+
+#skills-section {
+  margin-top: 58px;
+  margin-left: 69px;
+}
+
+.tag-div {
+  width: 100%;
+  height: 125px;
+  max-width: 100%;
+  max-height: 125px;
+  overflow-y: scroll;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #757575;
+}
+
+#signup-title {
+  font-size: 22px;
+  margin-bottom: 30px;
+}
+
+#signup-inner-block {
+  width: 100%;
+  height: 70px;
+  margin-bottom: 25px;
+}
+
+#row-next-radio {
+  width: 100%;
+  margin-top: 120px;
+  padding-right: 55px;
+}
+
+#radio {
+  padding-left: 60px;
+}
+
+#row-next-btn {
+  margin-top: 60px;
+  margin-right: 120px;
+  width: 100px;
+  height: 48px;
+}
+
+.p-l-5 {
+  padding-left: 5px;
+}
+
+#site-btn {
+  border-radius: 10px!important;
+  border-color: rgb(25,99,130);
+  margin-bottom: 20px;
+  background-color: #48c8ff;
+  color: rgb(255,255,255);
+  margin-top: 50px;
+  margin-right: 150px;
+  width: 100px;
+  height: 48px;
+}
+
+#site-btn:hover {
+  color: #fff;
+  background-color: rgb(27,65,164);
+  border-color: rgb(23,10,78);
+  transition: color .5s ease-in-out,background-color .5s ease-in-out,border-color .5s ease-in-out,box-shadow .5s ease-in-out;
+}
+
+.site-badge-pill {
+  padding-top: .6em;
+  padding-bottom: .4em;
+  padding-left: .8em;
+  padding-right: .8em;
+}
+
+.m-b-5 {
+  margin-bottom: 5px;
+}
+
+.site-btn-sm {
+  border-radius: 10px!important;
+  border-color: #0f79a7;
+  margin-bottom: 20px;
+  background-color: #48c8ff;
+  margin-top: 60px;
+  margin-right: 120px;
+  width: 100px;
+  height: 48px;
+}
+
+#site-btn-sec {
+  border-radius: 10px!important;
+  border-color: rgb(25,99,130);
+  margin-bottom: 20px;
+  background-color: #fff;
+  color: #48c8ff;
+  margin-top: 50px;
+  margin-right: 150px;
+  width: 100px;
+  height: 48px;
+}
+
+#site-btn-sec:hover {
+  color: #fff;
+  background-color: rgb(27,65,164);
+  border-color: rgb(23,10,78);
+  transition: color .5s ease-in-out,background-color .5s ease-in-out,border-color .5s ease-in-out,box-shadow .5s ease-in-out;
+}
+
+.b-r-4 {
+  border-radius: 4px;
+}
+
+.b-r-10 {
+  border-radius: 10px;
+}
+
